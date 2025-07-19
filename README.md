@@ -64,8 +64,26 @@ hyperhelix_system/
 ├── docs/
 ```
 
+## Module Responsibilities
+The directories above form a cohesive system:
+- **config/** holds runtime constants, logging and persistence settings.
+- **hyperhelix/node.py** defines node fields (id, payload, tags, layer, strand, edges) and metadata (creation time, updates, importance, permanence, perception history) along with execution helpers.
+- **hyperhelix/core.py** provides the `HyperHelix` graph with thread-safe `add_node`, `add_edge` and `spiral_walk` operations.
+- **analytics/** recalculates node importance and permanence on demand.
+- **evolution/evented_engine.py** reacts instantly to insert/update hooks, pruning or weaving without polling.
+- **execution/** bridges external callables (builds, tests, deploys) into graph execution and auto-bloom hooks.
+- **tasks/** manages project tasks through graph-driven `create_task`, `assign_task` and `sprint_plan` helpers.
+- **persistence/** stores nodes and edges via pluggable adapters for Neo4j, Qdrant or SQLAlchemy.
+- **api/** exposes operations over REST and GraphQL using Pydantic schemas and optional auth stubs.
+- **cli/** offers local commands to initialise, import, export and serve the system.
+- **visualization/** generates 3D coordinates for Three.js rendering.
+- **agents/** integrates chat interfaces and webhook events directly into the graph.
+- **frontend/** is a reference React application to browse and edit the graph.
+- **tests/** keep all modules verified.
+- **docs/** provide architecture details and tutorials.
+
 ## Logging and Error Management
-All modules use Python's `logging` package configured via `config/logging.yaml`. Adjust log levels in that file to control verbosity during development or deployment. Errors should raise specific exceptions and be logged with context. Avoid TODO markers in production code—track open tasks in issue trackers or documentation instead.
+Python's `logging` package is configured through `config/logging.yaml`. Logs are emitted to the console and stored in `hyperhelix.log`, while errors are also written to `errors.log`. Tune log levels in that file to match the environment. When handling exceptions, log the failure with context and either re-raise or return a meaningful error to callers. Avoid TODO markers in committed code—track outstanding work in issue trackers or documentation.
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.

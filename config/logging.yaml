@@ -7,11 +7,21 @@ handlers:
     class: logging.StreamHandler
     formatter: standard
     level: INFO
+  file:
+    class: logging.FileHandler
+    formatter: standard
+    filename: hyperhelix.log
+    level: INFO
+  error_file:
+    class: logging.FileHandler
+    formatter: standard
+    filename: errors.log
+    level: ERROR
 loggers:
   hyperhelix:
-    handlers: [console]
+    handlers: [console, file, error_file]
     level: INFO
     propagate: no
 root:
-  handlers: [console]
+  handlers: [console, file, error_file]
   level: WARNING

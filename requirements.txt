@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pydantic
+SQLAlchemy
+neo4j
+qdrant-client
