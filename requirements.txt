@@ -4,3 +4,4 @@ pydantic
 SQLAlchemy
 neo4j
 qdrant-client
+PyYAML

@@ -1,7 +1,7 @@
 # HelixHyper
 
-HelixHyper is a conceptual blueprint for a self-evolving AI context engine. It orchestrates code analysis, task management and execution through a multi-layered graph structure. While the current repository contains only documentation and example configuration, the following layout describes the intended modules and their roles. A sample logging setup lives in `config/logging.yaml` and can be adjusted as the project grows.
-
+HelixHyper orchestrates code analysis, task management and execution through a multi-layered graph structure.
+HelixHyper provides a minimal implementation alongside documentation and configuration. The layout below outlines the complete system as it grows.
 ```
 hyperhelix_system/
 ├── README.md
