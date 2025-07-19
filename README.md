@@ -1,6 +1,6 @@
 # HelixHyper
 
-HelixHyper is a conceptual blueprint for a self-evolving AI context engine. It orchestrates code analysis, task management and execution through a multi-layered graph structure. While the current repository contains only documentation, the following layout describes the intended modules and their roles.
+HelixHyper is a conceptual blueprint for a self-evolving AI context engine. It orchestrates code analysis, task management and execution through a multi-layered graph structure. While the current repository contains only documentation and example configuration, the following layout describes the intended modules and their roles. A sample logging setup lives in `config/logging.yaml` and can be adjusted as the project grows.
 
 ```
 hyperhelix_system/
@@ -65,7 +65,7 @@ hyperhelix_system/
 ```
 
 ## Logging and Error Management
-All modules use Python's `logging` package configured via `config/logging.yaml`. Errors should raise specific exceptions and be logged with context. Avoid TODO markers in production code—track open tasks in issue trackers or documentation instead.
+All modules use Python's `logging` package configured via `config/logging.yaml`. Adjust log levels in that file to control verbosity during development or deployment. Errors should raise specific exceptions and be logged with context. Avoid TODO markers in production code—track open tasks in issue trackers or documentation instead.
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.

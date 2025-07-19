@@ -1,0 +1,17 @@
+version: 1
+formatters:
+  standard:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: standard
+    level: INFO
+loggers:
+  hyperhelix:
+    handlers: [console]
+    level: INFO
+    propagate: no
+root:
+  handlers: [console]
+  level: WARNING
