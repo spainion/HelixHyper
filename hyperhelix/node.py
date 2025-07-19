@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List
 
 import logging
@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class NodeMetadata:
-    created: datetime = field(default_factory=datetime.utcnow)
-    updated: datetime = field(default_factory=datetime.utcnow)
+    created: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     importance: float = 0.0
     permanence: float = 0.0
     perception_history: List[str] = field(default_factory=list)

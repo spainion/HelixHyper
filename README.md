@@ -2,6 +2,14 @@
 
 HelixHyper orchestrates code analysis, task management and execution through a multi-layered graph structure.
 HelixHyper provides a minimal implementation alongside documentation and configuration. The layout below outlines the complete system as it grows.
+
+## Getting Started
+Install dependencies and run the small test suite to verify the environment:
+
+```bash
+pip install -r requirements.txt
+python -m pytest -q
+```
 ```
 hyperhelix_system/
 ├── README.md
