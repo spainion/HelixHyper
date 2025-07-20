@@ -204,8 +204,11 @@ with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=head
                 data = line[6:]
                 if data == "[DONE]":
                     break
-                print(json.loads(data)["choices"][0]["delta"].get("content", ""), end="")
+    print(json.loads(data)["choices"][0]["delta"].get("content", ""), end="")
 ```
+
+`OpenRouterChatModel` also provides a `stream_response()` method that returns the
+complete text from a streamed response.
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.

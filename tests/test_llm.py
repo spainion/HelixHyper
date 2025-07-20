@@ -13,3 +13,9 @@ def test_openrouter_chat_model_live():
     model = OpenRouterChatModel(api_key=os.getenv('OPENROUTER_API_KEY'))
     resp = model.generate_response([{'role': 'user', 'content': 'Ping?'}])
     assert isinstance(resp, str) and resp
+
+
+def test_openrouter_stream_live():
+    model = OpenRouterChatModel(api_key=os.getenv('OPENROUTER_API_KEY'))
+    resp = model.stream_response([{'role': 'user', 'content': 'Hello'}])
+    assert isinstance(resp, str) and resp
