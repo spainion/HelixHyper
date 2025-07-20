@@ -4,11 +4,25 @@ HelixHyper orchestrates code analysis, task management and execution through a m
 HelixHyper provides a minimal implementation alongside documentation and configuration. The layout below outlines the complete system as it grows.
 
 ## Getting Started
-Install dependencies and run the small test suite to verify the environment:
+Clone the repository and install all dependencies before running any commands.
 
 ```bash
+git clone <repo-url> && cd HelixHyper
 pip install -r requirements.txt
 python -m pytest -q
+```
+
+Start the API once tests pass:
+
+```bash
+uvicorn hyperhelix.api.main:app --reload
+```
+
+Alternatively build and run the provided Dockerfile:
+
+```bash
+docker build -t helixhyper .
+docker run -p 8000:8000 helixhyper
 ```
 ```
 hyperhelix_system/
