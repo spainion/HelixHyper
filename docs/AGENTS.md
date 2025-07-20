@@ -9,6 +9,9 @@ Follow these steps to work with the full HelixHyper system:
 4. Use the CLI or API components to interact with the graph. The API exposes endpoints for creating nodes and edges and walking the graph.
 5. Build the included `Dockerfile` to run everything in a container if desired.
 
+Supply a persistence adapter when constructing `HyperHelix` if you need to
+store nodes and edges across sessions.
+
 Keep documentation up to date as new modules are added.
 
 Configuration files include:

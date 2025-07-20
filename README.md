@@ -30,6 +30,10 @@ You can index a directory into the running graph with:
 python -m hyperhelix.cli.commands scan .
 ```
 
+The `HyperHelix` graph accepts a persistence adapter for automatically storing
+nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
+persist connections as they are created.
+
 Alternatively build and run the provided Dockerfile:
 
 ```bash
@@ -155,6 +159,8 @@ The directories above form a cohesive system:
 - **config/** holds runtime constants, logging and persistence settings.
 - **hyperhelix/node.py** defines node fields (id, payload, tags, layer, strand, edges) and metadata (creation time, updates, importance, permanence, perception history) along with execution helpers.
 - **hyperhelix/core.py** provides the `HyperHelix` graph with thread-safe `add_node`, `add_edge`, `spiral_walk` and `shortest_path` operations.
+- **HyperHelix** can be initialized with a persistence adapter so new nodes and
+  connections are saved automatically.
 - **analytics/** recalculates node importance and permanence on demand.
 - **evolution/evented_engine.py** reacts instantly to insert/update hooks, pruning or weaving without polling.
 - **execution/** bridges external callables (builds, tests, deploys) into graph execution and auto-bloom hooks.

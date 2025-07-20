@@ -8,3 +8,5 @@ def test_adapters_save_and_load():
         store = Adapter()
         store.save_node('a', {'x': 1})
         assert store.load_node('a') == {'x': 1}
+        store.save_edge('a', 'b', 2.0)
+        assert store.load_edges('a')['b'] == 2.0

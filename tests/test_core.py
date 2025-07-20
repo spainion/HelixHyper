@@ -1,5 +1,6 @@
 from hyperhelix.core import HyperHelix
 from hyperhelix.node import Node
+from hyperhelix.persistence.neo4j_adapter import Neo4jAdapter
 import pytest
 
 
@@ -42,3 +43,13 @@ def test_shortest_path():
 
     with pytest.raises(KeyError):
         g.shortest_path('missing', 'c')
+
+
+def test_graph_adapter_connections():
+    adapter = Neo4jAdapter()
+    g = HyperHelix(adapter=adapter)
+    g.add_node(Node(id='a', payload={}))
+    g.add_node(Node(id='b', payload={}))
+    g.add_edge('a', 'b', 2.0)
+    assert adapter.load_node('a') == {}
+    assert adapter.load_edges('a')['b'] == 2.0
