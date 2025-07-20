@@ -2,7 +2,15 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
+from ..core import HyperHelix
+from .routers import nodes, edges, walk, bloom
+
 app = FastAPI()
+app.state.graph = HyperHelix()
+app.include_router(nodes.router)
+app.include_router(edges.router)
+app.include_router(walk.router)
+app.include_router(bloom.router)
 
 
 @app.get('/')

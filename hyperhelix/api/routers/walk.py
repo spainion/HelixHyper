@@ -1,10 +1,19 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from typing import List
+
+from ..schemas import NodeOut
+from ..dependencies import get_graph
+from ...core import HyperHelix
 
 router = APIRouter()
 
 
-@router.get('/walk/{start_id}')
-def walk_graph(start_id: str) -> dict[str, str]:
-    return {"start": start_id}
+@router.get('/walk/{start_id}', response_model=List[NodeOut])
+def walk_graph(start_id: str, depth: int = 1, graph: HyperHelix = Depends(get_graph)) -> list[NodeOut]:
+    try:
+        nodes = list(graph.spiral_walk(start_id, depth))
+    except KeyError:
+        raise HTTPException(status_code=404, detail='Start node not found')
+    return [NodeOut(id=n.id, payload=n.payload) for n in nodes]

@@ -24,6 +24,19 @@ Alternatively build and run the provided Dockerfile:
 docker build -t helixhyper .
 docker run -p 8000:8000 helixhyper
 ```
+
+## API Usage
+With the server running you can create nodes and edges via HTTP:
+
+```bash
+curl -X POST http://localhost:8000/nodes -H 'Content-Type: application/json' \
+     -d '{"id": "a", "payload": {"foo": "bar"}}'
+
+curl -X POST http://localhost:8000/edges -H 'Content-Type: application/json' \
+     -d '{"a": "a", "b": "b"}'
+
+curl http://localhost:8000/walk/a?depth=1
+```
 ```
 hyperhelix_system/
 ├── README.md
