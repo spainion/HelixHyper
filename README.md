@@ -24,6 +24,12 @@ You can also run the server via the CLI command:
 python -m hyperhelix.cli.commands serve
 ```
 
+You can index a directory into the running graph with:
+
+```bash
+python -m hyperhelix.cli.commands scan .
+```
+
 Alternatively build and run the provided Dockerfile:
 
 ```bash

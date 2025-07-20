@@ -11,3 +11,4 @@
 - **tests/** – unit tests covering the system.
 
 Start the API from the command line with `python -m hyperhelix.cli.commands serve`.
+Use `python -m hyperhelix.cli.commands scan .` to index a directory.
