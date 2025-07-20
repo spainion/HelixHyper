@@ -1,0 +1,9 @@
+# Persistence adapter configuration
+neo4j:
+  uri: bolt://localhost:7687
+  user: neo4j
+  password: changeme
+qdrant:
+  url: http://localhost:6333
+sqlalchemy:
+  url: sqlite:///hyperhelix.db
