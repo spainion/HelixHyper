@@ -52,59 +52,87 @@ hyperhelix_system/
 ├── setup.py
 ├── requirements.txt
 ├── config/
-│   ├── default.yaml
-│   ├── logging.yaml
-│   └── persistence.yaml
-├── hyperhelix/
+│   ├── default.yaml             # all tunables (strands, thresholds, DB URIs…)
+│   ├── logging.yaml             # Python logging config
+│   └── persistence.yaml         # adapters (Neo4j, Qdrant, SQLAlchemy)
+├── hyperhelix/                  # core engine
 │   ├── __init__.py
-│   ├── node.py
-│   ├── edge.py
-│   ├── metadata.py
-│   ├── core.py
-│   ├── analytics/
-│   │   ├── importance.py
-│   │   └── permanence.py
-│   ├── evolution/
-│   │   ├── evented_engine.py
-│   │   └── continuous_engine.py
-│   ├── execution/
-│   │   ├── executor.py
-│   │   └── hook_manager.py
-│   ├── tasks/
-│   │   ├── task.py
-│   │   ├── task_manager.py
-│   │   └── sprint_planner.py
-│   ├── persistence/
-│   │   ├── base_adapter.py
-│   │   ├── neo4j_adapter.py
-│   │   ├── qdrant_adapter.py
-│   │   └── sqlalchemy_adapter.py
-│   ├── api/
-│   │   ├── main.py
-│   │   ├── dependencies.py
-│   │   ├── schemas.py
+│   ├── node.py                  # Node class (+payload, tags, layer, strand, edges, metadata)
+│   ├── edge.py                  # Edge helper (bidirectional connect, weight updates)
+│   ├── metadata.py              # metadata fields & perception_history logic
+│   ├── core.py                  # HyperHelix class (add_node, add_edge, spiral_walk)
+│   ├── analytics/               # self-analysis
+│   │   ├── __init__.py
+│   │   ├── importance.py        # compute_importance(node, all_nodes)
+│   │   └── permanence.py        # compute_permanence(node)
+│   ├── evolution/               # auto-evolution engines
+│   │   ├── __init__.py
+│   │   ├── evented_engine.py    # Event-driven (hooks → prune/weave/adjust)
+│   │   └── continuous_engine.py # optional interval fallback
+│   ├── execution/               # execution & agent hooks
+│   │   ├── __init__.py
+│   │   ├── executor.py          # Node.execute() wrapper
+│   │   └── hook_manager.py      # bind_recursion_to_task, on_insert/update hooks
+│   ├── tasks/                   # project & team orchestration
+│   │   ├── __init__.py
+│   │   ├── task.py              # Task node definitions (due, priority, assigned_to)
+│   │   ├── task_manager.py      # create_task(), assign_task()
+│   │   └── sprint_planner.py    # sprint_plan()
+│   ├── persistence/             # storage adapters
+│   │   ├── __init__.py
+│   │   ├── base_adapter.py      # interface (save_node, load_node, save_edge…)
+│   │   ├── neo4j_adapter.py     # graph DB backing store
+│   │   ├── qdrant_adapter.py    # vector DB for embeddings
+│   │   └── sqlalchemy_adapter.py# relational fallback
+│   ├── api/                     # FastAPI REST & GraphQL
+│   │   ├── __init__.py
+│   │   ├── main.py              # FastAPI()/include routers, CORS, auth
+│   │   ├── dependencies.py      # JWT/OAuth2 stubs
+│   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
-│   │       ├── nodes.py
-│   │       ├── edges.py
-│   │       ├── walk.py
-│   │       └── bloom.py
-│   ├── cli/
-│   │   └── commands.py
-│   ├── visualization/
-│   │   ├── coords_generator.py
-│   │   └── threejs_renderer.py
-│   └── agents/
-│       ├── chat_adapter.py
-│       └── webhook_listener.py
-├── frontend/
+│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}
+│   │       ├── edges.py         # POST /edges
+│   │       ├── walk.py          # GET /walk/{start_id}
+│   │       └── bloom.py         # POST /autobloom/{node_id}
+│   ├── cli/                     # command-line interface
+│   │   ├── __init__.py
+│   │   └── commands.py          # click-based commands (init, load, dump, serve)
+│   ├── visualization/           # 3D layout & rendering helpers
+│   │   ├── __init__.py
+│   │   ├── coords_generator.py  # helix_coords(node, idx, total, …)
+│   │   └── threejs_renderer.py  # JSON export for Three.js front-end
+│   └── agents/                  # LLM/chatbot integrations & webhooks
+│       ├── __init__.py
+│       ├── chat_adapter.py      # ChatMessage → Graph operations
+│       └── webhook_listener.py  # HTTP hook into CI/CD, code-commit events
+├── frontend/                    # React + Three.js UI
 │   ├── package.json
+│   ├── public/
+│   │   └── index.html
 │   └── src/
-│       ├── App.jsx
-│       ├── GraphView.jsx
+│       ├── App.jsx              # root component
+│       ├── GraphView.jsx        # canvas + renderer
 │       └── services/
-│           └── hyperhelix_api.js
-├── tests/
-├── docs/
+│           └── hyperhelix_api.js# Axios calls to backend
+├── tests/                       # full unit & integration coverage
+│   ├── test_node.py
+│   ├── test_core.py
+│   ├── test_importance.py
+│   ├── test_permanence.py
+│   ├── test_evented_engine.py
+│   ├── test_continuous_engine.py
+│   ├── test_executor.py
+│   ├── test_tasks.py
+│   ├── test_persistence.py
+│   ├── test_api.py
+│   └── test_cli.py
+└── docs/                        # full documentation & tutorials
+    ├── architecture.md          # high-level system overview
+    ├── modules.md               # deep dive per module
+    └── tutorials/
+        ├── quick_start.md
+        ├── team_orchestration.md
+        └── advanced_evolution.md
 ```
 
 ## Module Responsibilities
