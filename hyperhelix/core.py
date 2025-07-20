@@ -1,21 +1,24 @@
 from __future__ import annotations
 
 from collections import deque
+from heapq import heappop, heappush
 from typing import Callable, Dict, Generator, List
 
 import logging
 
 from .node import Node
 from .edge import connect
+from .persistence.base_adapter import BaseAdapter
 
 logger = logging.getLogger(__name__)
 
 
 class HyperHelix:
-    def __init__(self) -> None:
+    def __init__(self, adapter: "BaseAdapter" | None = None) -> None:
         self.nodes: Dict[str, Node] = {}
         self._insert_hooks: List[Callable[[HyperHelix, str], None]] = []
         self._update_hooks: List[Callable[[HyperHelix, str], None]] = []
+        self.adapter = adapter
 
         # Register default evolution hook
         try:
@@ -36,6 +39,8 @@ class HyperHelix:
     def add_node(self, node: Node) -> None:
         logger.debug("Adding node %s", node.id)
         self.nodes[node.id] = node
+        if self.adapter:
+            self.adapter.save_node(node.id, node.payload)
         for hook in self._insert_hooks:
             hook(self, node.id)
 
@@ -48,6 +53,8 @@ class HyperHelix:
             logger.error("Cannot add edge, node missing: %s", exc.args[0])
             raise
         connect(node_a, node_b, weight)
+        if self.adapter:
+            self.adapter.save_edge(a, b, weight)
 
     def find_nodes_by_tag(self, tag: str) -> list[Node]:
         """Return all nodes containing the given tag."""
@@ -70,3 +77,35 @@ class HyperHelix:
             yield node
             for neighbor_id in node.edges:
                 queue.append((neighbor_id, level + 1))
+
+    def shortest_path(self, start_id: str, end_id: str) -> List[str]:
+        """Return the shortest weighted path between two nodes."""
+        logger.debug("Shortest path %s -> %s", start_id, end_id)
+        if start_id not in self.nodes or end_id not in self.nodes:
+            logger.error("Start or end node missing: %s %s", start_id, end_id)
+            raise KeyError(start_id if start_id not in self.nodes else end_id)
+
+        distances: Dict[str, float] = {start_id: 0.0}
+        prev: Dict[str, str | None] = {start_id: None}
+        queue: List[tuple[float, str]] = [(0.0, start_id)]
+
+        while queue:
+            dist, current = heappop(queue)
+            if current == end_id:
+                break
+            for neighbor, weight in self.nodes[current].edges.items():
+                new_dist = dist + weight
+                if neighbor not in distances or new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    prev[neighbor] = current
+                    heappush(queue, (new_dist, neighbor))
+
+        if end_id not in prev:
+            return []
+
+        path = []
+        node = end_id
+        while node is not None:
+            path.append(node)
+            node = prev.get(node)
+        return list(reversed(path))

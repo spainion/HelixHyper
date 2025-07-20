@@ -9,11 +9,14 @@ Follow these steps to work with the full HelixHyper system:
 4. Use the CLI or API components to interact with the graph. The API exposes endpoints for creating nodes and edges and walking the graph.
 5. Build the included `Dockerfile` to run everything in a container if desired.
 
+Supply a persistence adapter when constructing `HyperHelix` if you need to
+store nodes and edges across sessions.
+
 Keep documentation up to date as new modules are added.
 
 Configuration files include:
 - `default.yaml` for runtime settings like strand counts.
 - `persistence.yaml` for database connection details.
 Update these along with `logging.yaml` when deploying to new environments.
-For LLM integration set provider API keys (e.g. `OPENAI_API_KEY`) in the environment before running the application.
+For LLM integration set provider API keys (e.g. `OPENAI_API_KEY`, `OPENROUTER_API_KEY`) in the environment before running the application.
 Each package directory may also contain an `AGENTS.md` with specialized instructions.

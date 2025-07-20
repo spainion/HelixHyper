@@ -29,3 +29,43 @@ def test_create_edge_and_walk():
     assert walk.status_code == 200
     ids = {n['id'] for n in walk.json()}
     assert ids == {'a', 'b'}
+
+def test_scan_endpoint(tmp_path):
+    app.state.graph = HyperHelix()
+    f = tmp_path / "a.py"
+    f.write_text("x=1")
+    resp = client.post('/scan', json={'path': str(tmp_path)})
+    assert resp.status_code == 200
+    assert f"file:{f.name}" in app.state.graph.nodes
+
+def test_root_endpoint():
+    resp = client.get('/')
+    assert resp.status_code == 200
+    assert resp.json() == {'status': 'ok'}
+
+
+def test_duplicate_node_error():
+    client.post('/nodes', json={'id': 'x', 'payload': {}})
+    resp = client.post('/nodes', json={'id': 'x', 'payload': {}})
+    assert resp.status_code == 400
+
+
+def test_edge_missing_node():
+    resp = client.post('/edges', json={'a': 'x', 'b': 'y'})
+    assert resp.status_code == 404
+
+
+def test_walk_missing_start():
+    resp = client.get('/walk/missing')
+    assert resp.status_code == 404
+
+def test_autobloom():
+    client.post('/nodes', json={'id': 'orig', 'payload': {}})
+    resp = client.post('/autobloom/orig')
+    assert resp.status_code == 200
+    assert 'bloom:orig' in app.state.graph.nodes
+
+
+def test_get_missing_node():
+    resp = client.get('/nodes/none')
+    assert resp.status_code == 404

@@ -10,6 +10,6 @@ if CONFIG_PATH.exists():
         config = yaml.safe_load(f)
     logging.config.dictConfig(config)
 else:
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO)  # pragma: no cover
 
 __all__ = ['core', 'node', 'edge', 'metadata']

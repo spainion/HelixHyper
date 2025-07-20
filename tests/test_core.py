@@ -1,5 +1,6 @@
 from hyperhelix.core import HyperHelix
 from hyperhelix.node import Node
+from hyperhelix.persistence.neo4j_adapter import Neo4jAdapter
 import pytest
 
 
@@ -27,3 +28,28 @@ def test_spiral_walk_missing_start():
     graph = HyperHelix()
     with pytest.raises(KeyError):
         list(graph.spiral_walk('missing'))
+
+
+def test_shortest_path():
+    g = HyperHelix()
+    g.add_node(Node(id='a', payload=None))
+    g.add_node(Node(id='b', payload=None))
+    g.add_node(Node(id='c', payload=None))
+    g.add_edge('a', 'b', 1)
+    g.add_edge('b', 'c', 2)
+    g.add_edge('a', 'c', 5)
+
+    assert g.shortest_path('a', 'c') == ['a', 'b', 'c']
+
+    with pytest.raises(KeyError):
+        g.shortest_path('missing', 'c')
+
+
+def test_graph_adapter_connections():
+    adapter = Neo4jAdapter()
+    g = HyperHelix(adapter=adapter)
+    g.add_node(Node(id='a', payload={}))
+    g.add_node(Node(id='b', payload={}))
+    g.add_edge('a', 'b', 2.0)
+    assert adapter.load_node('a') == {}
+    assert adapter.load_edges('a')['b'] == 2.0
