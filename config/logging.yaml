@@ -1,0 +1,27 @@
+version: 1
+formatters:
+  standard:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: standard
+    level: INFO
+  file:
+    class: logging.FileHandler
+    formatter: standard
+    filename: hyperhelix.log
+    level: INFO
+  error_file:
+    class: logging.FileHandler
+    formatter: standard
+    filename: errors.log
+    level: ERROR
+loggers:
+  hyperhelix:
+    handlers: [console, file, error_file]
+    level: INFO
+    propagate: no
+root:
+  handlers: [console, file, error_file]
+  level: WARNING

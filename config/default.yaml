@@ -1,0 +1,4 @@
+# Default runtime settings
+strands: 3
+thresholds:
+  importance: 0.5
