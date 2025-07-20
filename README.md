@@ -25,6 +25,14 @@ docker build -t helixhyper .
 docker run -p 8000:8000 helixhyper
 ```
 
+## Development Workflow
+Follow these practices when contributing to ensure consistent builds and clear logs:
+
+1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` in your environment.
+2. Run `pytest -q` to verify all modules import and tests succeed before committing.
+3. Configure logging via `config/logging.yaml`; runtime output goes to `hyperhelix.log` and errors to `errors.log`.
+4. Avoid leaving `TODO` comments in the code—track outstanding work in documentation or the issue tracker.
+
 ## API Usage
 With the server running you can create nodes and edges via HTTP:
 
