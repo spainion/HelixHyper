@@ -32,3 +32,10 @@ def test_execute_updates_hooks_and_history():
     execute_node(g, "x")
     assert n.metadata.perception_history == ["2"]
 
+
+def test_on_update_invokes_prune():
+    g = HyperHelix()
+    n = Node(id='a', payload=None)
+    g.add_node(n)
+    evented_engine.on_update(g, 'a')
+    assert n.metadata.permanence >= 0

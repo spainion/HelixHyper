@@ -50,6 +50,9 @@ curl -X POST http://localhost:8000/edges -H 'Content-Type: application/json' \
      -d '{"a": "a", "b": "b"}'
 
 curl http://localhost:8000/walk/a?depth=1
+
+# index project source
+curl -X POST http://localhost:8000/scan -d 'path=.'
 ```
 ```
 hyperhelix_system/
