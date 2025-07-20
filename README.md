@@ -122,7 +122,7 @@ Python's `logging` package is configured through `config/logging.yaml`. Logs are
 The graph core validates nodes when creating edges and logs an error if a referenced node is missing. `spiral_walk` checks the starting node ID and raises `KeyError` when absent. Each node updates its `metadata.updated` timestamp whenever `execute()` runs so event timing stays accurate.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. API keys are read from environment variables.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` in the environment so integrations work correctly.
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.
