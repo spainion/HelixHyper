@@ -75,7 +75,7 @@ hyperhelix_system/
 │   ├── node.py                  # Node class (+payload, tags, layer, strand, edges, metadata)
 │   ├── edge.py                  # Edge helper (bidirectional connect, weight updates)
 │   ├── metadata.py              # metadata fields & perception_history logic
-│   ├── core.py                  # HyperHelix class (add_node, add_edge, spiral_walk)
+│   ├── core.py                  # HyperHelix class (add_node, add_edge, spiral_walk, shortest_path)
 │   ├── analytics/               # self-analysis
 │   │   ├── __init__.py
 │   │   ├── importance.py        # compute_importance(node, all_nodes)
@@ -154,7 +154,7 @@ hyperhelix_system/
 The directories above form a cohesive system:
 - **config/** holds runtime constants, logging and persistence settings.
 - **hyperhelix/node.py** defines node fields (id, payload, tags, layer, strand, edges) and metadata (creation time, updates, importance, permanence, perception history) along with execution helpers.
-- **hyperhelix/core.py** provides the `HyperHelix` graph with thread-safe `add_node`, `add_edge` and `spiral_walk` operations.
+- **hyperhelix/core.py** provides the `HyperHelix` graph with thread-safe `add_node`, `add_edge`, `spiral_walk` and `shortest_path` operations.
 - **analytics/** recalculates node importance and permanence on demand.
 - **evolution/evented_engine.py** reacts instantly to insert/update hooks, pruning or weaving without polling.
 - **execution/** bridges external callables (builds, tests, deploys) into graph execution and auto-bloom hooks.

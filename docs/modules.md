@@ -4,6 +4,7 @@
 - **hyperhelix/** – core engine and subpackages for analytics, evolution, execution and more.
 - **hyperhelix/api/** – FastAPI server exposing REST routes.
 - **hyperhelix/cli/** – command-line interface helpers.
+- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `spiral_walk` and `shortest_path`.
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
 - **hyperhelix/agents/code_scanner.py** – scans directories and stores Python source in the graph.
 - **hyperhelix/agents/llm.py** – wrappers for OpenAI and OpenRouter chat models.

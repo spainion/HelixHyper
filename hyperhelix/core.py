@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import deque
+from heapq import heappop, heappush
 from typing import Callable, Dict, Generator, List
 
 import logging
@@ -70,3 +71,35 @@ class HyperHelix:
             yield node
             for neighbor_id in node.edges:
                 queue.append((neighbor_id, level + 1))
+
+    def shortest_path(self, start_id: str, end_id: str) -> List[str]:
+        """Return the shortest weighted path between two nodes."""
+        logger.debug("Shortest path %s -> %s", start_id, end_id)
+        if start_id not in self.nodes or end_id not in self.nodes:
+            logger.error("Start or end node missing: %s %s", start_id, end_id)
+            raise KeyError(start_id if start_id not in self.nodes else end_id)
+
+        distances: Dict[str, float] = {start_id: 0.0}
+        prev: Dict[str, str | None] = {start_id: None}
+        queue: List[tuple[float, str]] = [(0.0, start_id)]
+
+        while queue:
+            dist, current = heappop(queue)
+            if current == end_id:
+                break
+            for neighbor, weight in self.nodes[current].edges.items():
+                new_dist = dist + weight
+                if neighbor not in distances or new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    prev[neighbor] = current
+                    heappush(queue, (new_dist, neighbor))
+
+        if end_id not in prev:
+            return []
+
+        path = []
+        node = end_id
+        while node is not None:
+            path.append(node)
+            node = prev.get(node)
+        return list(reversed(path))
