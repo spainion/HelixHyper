@@ -34,7 +34,7 @@ docker run -p 8000:8000 helixhyper
 ## Development Workflow
 Follow these practices when contributing to ensure consistent builds and clear logs:
 
-1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` in your environment.
+1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` or `OPENROUTER_API_KEY` in your environment.
 2. Run `pytest -q` to verify all modules import and tests succeed before committing.
 3. Configure logging via `config/logging.yaml`; runtime output goes to `hyperhelix.log` and errors to `errors.log`.
 4. Avoid leaving `TODO` comments in the code—track outstanding work in documentation or the issue tracker.
@@ -168,7 +168,38 @@ The graph core validates nodes when creating edges and logs an error if a refere
 The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` in the environment so integrations work correctly.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` and `OPENROUTER_API_KEY` in the environment so integrations work correctly.
+
+### Calling OpenAI directly
+
+```
+curl https://api.openai.com/v1/chat/completions \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"What’s in this image?","image":"data:image/png;base64,....."}],"temperature":0.7,"stream":true}'
+```
+
+### Streaming with OpenRouter
+
+```python
+import json
+import requests
+
+question = "How would you build the tallest building ever?"
+headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"}
+payload = {"model": "openai/gpt-4o", "messages": [{"role": "user", "content": question}], "stream": True}
+buffer = ""
+with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, stream=True) as r:
+    for chunk in r.iter_content(chunk_size=1024, decode_unicode=True):
+        buffer += chunk
+        while "\n" in buffer:
+            line, buffer = buffer.split("\n", 1)
+            if line.startswith("data: "):
+                data = line[6:]
+                if data == "[DONE]":
+                    break
+                print(json.loads(data)["choices"][0]["delta"].get("content", ""), end="")
+```
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.
