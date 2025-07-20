@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from ..core import HyperHelix
+from ..analytics.importance import compute_importance
+from ..analytics.permanence import compute_permanence
 
 
 def on_insert(graph: HyperHelix, node_id: str) -> None:
-    """Example hook triggered when a node is inserted."""
-    # A real implementation could prune or weave the graph here.
-    _ = graph.nodes.get(node_id)
+    """Update metrics when a node is inserted."""
+    node = graph.nodes[node_id]
+    node.metadata.importance = compute_importance(node, graph.nodes.values())
+    node.metadata.permanence = compute_permanence(node)

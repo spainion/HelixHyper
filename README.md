@@ -18,6 +18,12 @@ Start the API once tests pass:
 uvicorn hyperhelix.api.main:app --reload
 ```
 
+You can also run the server via the CLI command:
+
+```bash
+python -m hyperhelix.cli.commands serve
+```
+
 Alternatively build and run the provided Dockerfile:
 
 ```bash
@@ -156,6 +162,7 @@ The directories above form a cohesive system:
 ## Logging and Error Management
 Python's `logging` package is configured through `config/logging.yaml`. Logs are emitted to the console and stored in `hyperhelix.log`, while errors are also written to `errors.log`. Tune log levels in that file to match the environment. When handling exceptions, log the failure with context and either re-raise or return a meaningful error to callers. Avoid TODO markers in committed code—track outstanding work in issue trackers or documentation.
 The graph core validates nodes when creating edges and logs an error if a referenced node is missing. `spiral_walk` checks the starting node ID and raises `KeyError` when absent. Each node updates its `metadata.updated` timestamp whenever `execute()` runs so event timing stays accurate.
+The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
 Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` in the environment so integrations work correctly.

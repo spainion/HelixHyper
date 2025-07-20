@@ -4,5 +4,8 @@
 - **hyperhelix/** – core engine and subpackages for analytics, evolution, execution and more.
 - **hyperhelix/api/** – FastAPI server exposing REST routes.
 - **hyperhelix/cli/** – command-line interface helpers.
+- **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
 - **frontend/** – example React + Three.js client.
 - **tests/** – unit tests covering the system.
+
+Start the API from the command line with `python -m hyperhelix.cli.commands serve`.

@@ -6,6 +6,9 @@ from ..core import HyperHelix
 
 
 def bind_recursion_to_task(graph: HyperHelix, task: Callable[[], None]) -> None:
-    """Register a callback to be executed during graph evolution."""
-    # Simplified hook registration
-    task()
+    """Invoke ``task`` whenever a node is inserted."""
+
+    def _hook(_: HyperHelix, __: str) -> None:
+        task()
+
+    graph.register_insert_hook(_hook)

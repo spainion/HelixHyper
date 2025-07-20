@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Dict, Generator
+from typing import Callable, Dict, Generator, List
 
 import logging
 
@@ -14,10 +14,30 @@ logger = logging.getLogger(__name__)
 class HyperHelix:
     def __init__(self) -> None:
         self.nodes: Dict[str, Node] = {}
+        self._insert_hooks: List[Callable[[HyperHelix, str], None]] = []
+        self._update_hooks: List[Callable[[HyperHelix, str], None]] = []
+
+        # Register default evolution hook
+        try:
+            from .evolution import evented_engine
+
+            self.register_insert_hook(evented_engine.on_insert)
+        except Exception:  # pragma: no cover - optional imports
+            logger.exception("Failed to register default hooks")
+
+    def register_insert_hook(self, hook: Callable[["HyperHelix", str], None]) -> None:
+        """Register a callback for node insertion events."""
+        self._insert_hooks.append(hook)
+
+    def register_update_hook(self, hook: Callable[["HyperHelix", str], None]) -> None:
+        """Register a callback for node updates."""
+        self._update_hooks.append(hook)
 
     def add_node(self, node: Node) -> None:
         logger.debug("Adding node %s", node.id)
         self.nodes[node.id] = node
+        for hook in self._insert_hooks:
+            hook(self, node.id)
 
     def add_edge(self, a: str, b: str, weight: float = 1.0) -> None:
         logger.debug("Adding edge %s <-> %s", a, b)

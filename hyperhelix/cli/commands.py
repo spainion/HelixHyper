@@ -10,4 +10,7 @@ def cli() -> None:
 
 @cli.command()
 def serve() -> None:
-    click.echo("Serving API")
+    """Run the HTTP API using Uvicorn."""
+    import uvicorn
+
+    uvicorn.run("hyperhelix.api.main:app", host="0.0.0.0", port=8000)
