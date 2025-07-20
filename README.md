@@ -186,6 +186,8 @@ With this in place, your **Living Hyper-Helix**:
 - Orchestrates entire software projects and teams
 - Renders in 3D, responds to chat and webhook events
 - Scales from a single developer to global micro-services
+- Self-heals by pruning broken edges and weaving new nodes by shared tags
+- Records execution results in each node's perception history
 - Quickly queries context with `find_nodes_by_tag` and integrates responses from popular LLMs
 
 This is the full system—every file, class and function—powering a zero-bloat, infinitely weaving digital brain.

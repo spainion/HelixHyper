@@ -28,6 +28,8 @@ class Node:
             try:
                 result = self.execute_fn(self.payload)
                 logger.info("Node %s executed successfully", self.id)
+                if result is not None:
+                    self.metadata.perception_history.append(str(result))
                 return result
             except Exception:  # pragma: no cover - actual error path
                 logger.exception("Execution failed for node %s", self.id)
