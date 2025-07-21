@@ -65,7 +65,18 @@ curl -X POST http://localhost:8000/nodes -H 'Content-Type: application/json' \
 curl -X POST http://localhost:8000/edges -H 'Content-Type: application/json' \
      -d '{"a": "a", "b": "b"}'
 
+curl http://localhost:8000/nodes
+
+curl http://localhost:8000/edges
+
 curl http://localhost:8000/walk/a?depth=1
+
+# get a graph summary
+curl http://localhost:8000/summary
+
+# execute nodes
+curl -X POST http://localhost:8000/nodes/a/execute
+# returns updated node data
 
 # index project source
 curl -X POST http://localhost:8000/scan -d 'path=.'
@@ -77,8 +88,11 @@ curl -X POST http://localhost:8000/tasks/t1/assign -d 'user=alice'
 curl http://localhost:8000/tasks
 curl http://localhost:8000/tasks/plan
 
-# get code suggestions
-curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello"}'
+# get code suggestions (the server automatically sends a graph summary)
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'
+# use OpenRouter
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'
+curl http://localhost:8000/models/openrouter
 ```
 ```
 hyperhelix_system/
@@ -125,13 +139,15 @@ hyperhelix_system/
 │   │   ├── dependencies.py      # JWT/OAuth2 stubs
 │   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
-│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}
-│   │       ├── edges.py         # POST /edges
+│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, POST /nodes/{id}/execute
+│   │       ├── edges.py         # POST /edges, GET /edges
 │   │       ├── walk.py          # GET /walk/{start_id}
 │   │       ├── bloom.py         # POST /autobloom/{node_id}
 │   │       ├── scan.py          # POST /scan
 │   │       ├── tasks.py         # POST /tasks
-│   │       └── suggest.py       # POST /suggest
+│   │       ├── suggest.py       # POST /suggest
+│   │       ├── models.py        # GET /models/openrouter
+│   │       └── summary.py       # GET /summary
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)
@@ -241,6 +257,11 @@ Use `list_openrouter_models()` to retrieve available models from the service:
 from hyperhelix.agents.llm import list_openrouter_models
 models = list_openrouter_models()
 print(models)
+```
+Alternatively, call `GET /models/openrouter` to fetch the list via the API:
+
+```bash
+curl http://localhost:8000/models/openrouter
 ```
 
 ## Contribution Guidelines
