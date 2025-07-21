@@ -8,14 +8,14 @@ class NodeIn(BaseModel):
     """Incoming node data."""
 
     id: str
-    payload: dict
+    payload: dict | None = None
 
 
 class NodeOut(BaseModel):
     """Node representation returned from the API."""
 
     id: str
-    payload: dict
+    payload: dict | None = None
 
 
 class EdgeIn(BaseModel):

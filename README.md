@@ -73,6 +73,7 @@ curl http://localhost:8000/walk/a?depth=1
 
 # execute nodes
 curl -X POST http://localhost:8000/nodes/a/execute
+# returns updated node data
 
 # index project source
 curl -X POST http://localhost:8000/scan -d 'path=.'

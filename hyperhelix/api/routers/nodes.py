@@ -41,11 +41,12 @@ def list_nodes(graph: HyperHelix = Depends(get_graph)) -> list[NodeOut]:
     return sorted(nodes, key=lambda n: n.id)
 
 
-@router.post('/nodes/{node_id}/execute')
-def execute_node_endpoint(node_id: str, graph: HyperHelix = Depends(get_graph)) -> dict[str, str]:
+@router.post('/nodes/{node_id}/execute', response_model=NodeOut)
+def execute_node_endpoint(node_id: str, graph: HyperHelix = Depends(get_graph)) -> NodeOut:
     """Execute the given node and trigger update hooks."""
     if node_id not in graph.nodes:
         logger.error("Node %s not found", node_id)
         raise HTTPException(status_code=404, detail='Not found')
     execute_node(graph, node_id)
-    return {"status": "executed"}
+    node = graph.nodes[node_id]
+    return NodeOut(id=node.id, payload=node.payload)

@@ -98,6 +98,8 @@ def test_execute_node_endpoint():
     resp = client.post('/nodes/x/execute')
     assert resp.status_code == 200
     assert called.get('x') is True
+    data = resp.json()
+    assert data['id'] == 'x'
 
 
 def test_task_endpoints():

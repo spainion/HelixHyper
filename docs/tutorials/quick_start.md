@@ -6,4 +6,4 @@
 4. Use the provided HTTP routes to create nodes and edges.
 5. Retrieve existing nodes with `curl http://localhost:8000/nodes`.
 6. List created edges with `curl http://localhost:8000/edges`.
-7. Execute a node with `curl -X POST http://localhost:8000/nodes/<id>/execute`.
+7. Execute a node with `curl -X POST http://localhost:8000/nodes/<id>/execute` and receive the updated node back.
