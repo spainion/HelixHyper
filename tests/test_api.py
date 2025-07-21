@@ -72,6 +72,15 @@ def test_get_missing_node():
     assert resp.status_code == 404
 
 
+def test_list_nodes():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    resp = client.get('/nodes')
+    assert resp.status_code == 200
+    ids = {n['id'] for n in resp.json()}
+    assert ids == {'a', 'b'}
+
+
 def test_task_endpoints():
     resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
     assert resp.status_code == 200

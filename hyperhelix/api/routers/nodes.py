@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
+from typing import List
 import logging
 
 from ..schemas import NodeIn, NodeOut
@@ -30,3 +31,9 @@ def get_node(node_id: str, graph: HyperHelix = Depends(get_graph)) -> NodeOut:
         logger.error("Node %s not found", node_id)
         raise HTTPException(status_code=404, detail='Not found')
     return NodeOut(id=node.id, payload=node.payload)
+
+
+@router.get('/nodes', response_model=List[NodeOut])
+def list_nodes(graph: HyperHelix = Depends(get_graph)) -> list[NodeOut]:
+    """Return all nodes in the graph."""
+    return [NodeOut(id=n.id, payload=n.payload) for n in graph.nodes.values()]
