@@ -69,3 +69,23 @@ def test_autobloom():
 def test_get_missing_node():
     resp = client.get('/nodes/none')
     assert resp.status_code == 404
+
+
+def test_task_endpoints():
+    resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
+    assert resp.status_code == 200
+    resp = client.post('/tasks/t1/assign', json={'user': 'bob'})
+    assert resp.status_code == 200
+    listing = client.get('/tasks')
+    assert listing.status_code == 200
+    assert listing.json()[0]['id'] == 't1'
+    plan = client.get('/tasks/plan')
+    assert plan.status_code == 200
+    assert plan.json() == ['t1']
+
+
+def test_suggest_endpoint():
+    resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'openai'})
+    assert resp.status_code == 200
+    assert 'response' in resp.json()
+

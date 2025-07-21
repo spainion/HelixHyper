@@ -1,6 +1,10 @@
 import os
 
-from hyperhelix.agents.llm import OpenAIChatModel, OpenRouterChatModel
+from hyperhelix.agents.llm import (
+    OpenAIChatModel,
+    OpenRouterChatModel,
+    list_openrouter_models,
+)
 
 
 def test_openai_chat_model_live():
@@ -19,3 +23,9 @@ def test_openrouter_stream_live():
     model = OpenRouterChatModel(api_key=os.getenv('OPENROUTER_API_KEY'))
     resp = model.stream_response([{'role': 'user', 'content': 'Hello'}])
     assert isinstance(resp, str) and resp
+
+
+def test_list_models_live():
+    models = list_openrouter_models(api_key=os.getenv('OPENROUTER_API_KEY'))
+    assert isinstance(models, list) and models
+

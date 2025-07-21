@@ -66,6 +66,16 @@ curl http://localhost:8000/walk/a?depth=1
 
 # index project source
 curl -X POST http://localhost:8000/scan -d 'path=.'
+
+# manage tasks
+curl -X POST http://localhost:8000/tasks -H 'Content-Type: application/json' \
+     -d '{"id":"t1","description":"demo"}'
+curl -X POST http://localhost:8000/tasks/t1/assign -d 'user=alice'
+curl http://localhost:8000/tasks
+curl http://localhost:8000/tasks/plan
+
+# get code suggestions
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello"}'
 ```
 ```
 hyperhelix_system/
@@ -115,7 +125,10 @@ hyperhelix_system/
 │   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}
 │   │       ├── edges.py         # POST /edges
 │   │       ├── walk.py          # GET /walk/{start_id}
-│   │       └── bloom.py         # POST /autobloom/{node_id}
+│   │       ├── bloom.py         # POST /autobloom/{node_id}
+│   │       ├── scan.py          # POST /scan
+│   │       ├── tasks.py         # POST /tasks
+│   │       └── suggest.py       # POST /suggest
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)
@@ -218,6 +231,14 @@ with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=head
 
 `OpenRouterChatModel` also provides a `stream_response()` method that returns the
 complete text from a streamed response.
+
+Use `list_openrouter_models()` to retrieve available models from the service:
+
+```python
+from hyperhelix.agents.llm import list_openrouter_models
+models = list_openrouter_models()
+print(models)
+```
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.

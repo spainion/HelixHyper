@@ -1,0 +1,28 @@
+from __future__ import annotations
+
+import os
+from fastapi import APIRouter, Depends, Body, HTTPException
+
+from ..dependencies import get_graph
+from ...core import HyperHelix
+from ...agents.llm import OpenAIChatModel, OpenRouterChatModel
+
+router = APIRouter()
+
+
+@router.post('/suggest')
+def suggest(
+    prompt: str = Body(..., embed=True),
+    provider: str = Body('openai'),
+    model: str | None = Body(None),
+    graph: HyperHelix = Depends(get_graph),
+) -> dict[str, str]:
+    if provider == 'openai':
+        llm = OpenAIChatModel(model=model or 'gpt-3.5-turbo', api_key=os.getenv('OPENAI_API_KEY'))
+    elif provider == 'openrouter':
+        llm = OpenRouterChatModel(model=model or 'openai/gpt-4o', api_key=os.getenv('OPENROUTER_API_KEY'))
+    else:
+        raise HTTPException(status_code=400, detail='Unknown provider')
+    response = llm.generate_response([{'role': 'user', 'content': prompt}])
+    return {'response': response}
+

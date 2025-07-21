@@ -96,3 +96,23 @@ class OpenRouterChatModel(BaseChatModel):
         except Exception:  # pragma: no cover - network failures
             logger.exception("OpenRouter streaming request failed")
             raise
+
+
+def list_openrouter_models(api_key: str | None = None) -> list[str]:
+    """Return a list of available model IDs from OpenRouter."""
+    import httpx
+
+    headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+    try:
+        resp = httpx.get(
+            "https://openrouter.ai/api/v1/models",
+            headers=headers,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return [m["id"] for m in data.get("data", [])]
+    except Exception:  # pragma: no cover - network failures
+        logger.exception("Failed to list models")
+        raise
+
