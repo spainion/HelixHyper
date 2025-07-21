@@ -86,7 +86,9 @@ curl http://localhost:8000/tasks
 curl http://localhost:8000/tasks/plan
 
 # get code suggestions
-curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello"}'
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'
+# use OpenRouter
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'
 ```
 ```
 hyperhelix_system/

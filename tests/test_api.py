@@ -124,3 +124,13 @@ def test_suggest_endpoint():
     assert resp.status_code == 200
     assert 'response' in resp.json()
 
+
+@pytest.mark.skipif(
+    not os.getenv('OPENROUTER_API_KEY'),
+    reason='OPENROUTER_API_KEY not set; skipping live integration test',
+)
+def test_suggest_endpoint_openrouter():
+    resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'openrouter'})
+    assert resp.status_code == 200
+    assert 'response' in resp.json()
+
