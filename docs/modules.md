@@ -8,7 +8,7 @@
 - **persistence adapters** – implement `save_node`, `load_node`, `save_edge` and
   `load_edges` for automatic storage when supplied to `HyperHelix`.
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
-- **hyperhelix/agents/code_scanner.py** – scans directories and stores Python source in the graph.
+- **hyperhelix/agents/code_scanner.py** – scans directories, stores Python source and links files via imports.
 - **hyperhelix/agents/llm.py** – wrappers for OpenAI and OpenRouter chat models.
 - **hyperhelix/api/routers/scan.py** – endpoint to index directories via `/scan`.
 - **frontend/** – example React + Three.js client.
