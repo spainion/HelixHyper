@@ -71,6 +71,9 @@ curl http://localhost:8000/edges
 
 curl http://localhost:8000/walk/a?depth=1
 
+# get a graph summary
+curl http://localhost:8000/summary
+
 # execute nodes
 curl -X POST http://localhost:8000/nodes/a/execute
 # returns updated node data
@@ -143,7 +146,8 @@ hyperhelix_system/
 │   │       ├── scan.py          # POST /scan
 │   │       ├── tasks.py         # POST /tasks
 │   │       ├── suggest.py       # POST /suggest
-│   │       └── models.py        # GET /models/openrouter
+│   │       ├── models.py        # GET /models/openrouter
+│   │       └── summary.py       # GET /summary
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)

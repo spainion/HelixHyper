@@ -92,6 +92,14 @@ def test_list_edges():
     assert edges == {('a', 'b', 2.0)}
 
 
+def test_summary_endpoint():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    resp = client.get('/summary')
+    assert resp.status_code == 200
+    data = resp.json()['summary']
+    assert '1' in data
+
+
 def test_execute_node_endpoint():
     called = {}
     app.state.graph.add_node(Node(id='x', payload=None, execute_fn=lambda _: called.setdefault('x', True)))

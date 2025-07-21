@@ -15,6 +15,7 @@
 - **hyperhelix/api/routers/nodes.py** – create, retrieve, list and execute nodes.
 - **hyperhelix/api/routers/edges.py** – create and list edges.
 - **hyperhelix/api/routers/models.py** – list available OpenRouter models.
+- **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
 - **hyperhelix/agents/llm.list_openrouter_models** – fetch available models.
