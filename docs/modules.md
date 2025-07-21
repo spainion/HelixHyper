@@ -10,6 +10,7 @@
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
 - **hyperhelix/agents/code_scanner.py** – scans directories, stores Python source and links files via imports.
 - **hyperhelix/agents/llm.py** – wrappers for OpenAI and OpenRouter chat models.
+- **hyperhelix/agents/context.py** – build system prompts from the graph.
 - **hyperhelix/api/routers/scan.py** – endpoint to index directories via `/scan`.
 - **hyperhelix/api/routers/nodes.py** – create, retrieve, list and execute nodes.
 - **hyperhelix/api/routers/edges.py** – create and list edges.

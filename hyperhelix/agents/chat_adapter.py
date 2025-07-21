@@ -3,6 +3,7 @@ from __future__ import annotations
 from ..core import HyperHelix
 from ..node import Node
 from .llm import BaseChatModel
+from .context import graph_summary
 
 
 def handle_chat_message(graph: HyperHelix, message: str, model: BaseChatModel | None = None) -> None:
@@ -11,6 +12,7 @@ def handle_chat_message(graph: HyperHelix, message: str, model: BaseChatModel | 
     graph.add_node(node)
     if model:
         response = model.generate_response([
+            {"role": "system", "content": graph_summary(graph)},
             {"role": "user", "content": message},
         ])
         graph.add_node(Node(id=f"response:{message}", payload={"msg": response}))

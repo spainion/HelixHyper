@@ -85,7 +85,7 @@ curl -X POST http://localhost:8000/tasks/t1/assign -d 'user=alice'
 curl http://localhost:8000/tasks
 curl http://localhost:8000/tasks/plan
 
-# get code suggestions
+# get code suggestions (the server automatically sends a graph summary)
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'
 # use OpenRouter
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Body, HTTPException
 from ..dependencies import get_graph
 from ...core import HyperHelix
 from ...agents.llm import OpenAIChatModel, OpenRouterChatModel
+from ...agents.context import graph_summary
 
 router = APIRouter()
 
@@ -23,6 +24,10 @@ def suggest(
         llm = OpenRouterChatModel(model=model or 'openai/gpt-4o', api_key=os.getenv('OPENROUTER_API_KEY'))
     else:
         raise HTTPException(status_code=400, detail='Unknown provider')
-    response = llm.generate_response([{'role': 'user', 'content': prompt}])
+    messages = [
+        {'role': 'system', 'content': graph_summary(graph)},
+        {'role': 'user', 'content': prompt},
+    ]
+    response = llm.generate_response(messages)
     return {'response': response}
 

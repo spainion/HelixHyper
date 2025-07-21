@@ -7,6 +7,6 @@
 5. Retrieve existing nodes with `curl http://localhost:8000/nodes`.
 6. List created edges with `curl http://localhost:8000/edges`.
 7. Execute a node with `curl -X POST http://localhost:8000/nodes/<id>/execute` and receive the updated node back.
-8. Request code suggestions with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'`.
+8. Request code suggestions with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'` (includes a graph summary automatically).
 9. Use OpenRouter with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'`.
 10. List OpenRouter models with `curl http://localhost:8000/models/openrouter`.
