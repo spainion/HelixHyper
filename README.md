@@ -67,6 +67,8 @@ curl -X POST http://localhost:8000/edges -H 'Content-Type: application/json' \
 
 curl http://localhost:8000/nodes
 
+curl http://localhost:8000/edges
+
 curl http://localhost:8000/walk/a?depth=1
 
 # index project source
@@ -128,7 +130,7 @@ hyperhelix_system/
 │   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
 │   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}
-│   │       ├── edges.py         # POST /edges
+│   │       ├── edges.py         # POST /edges, GET /edges
 │   │       ├── walk.py          # GET /walk/{start_id}
 │   │       ├── bloom.py         # POST /autobloom/{node_id}
 │   │       ├── scan.py          # POST /scan

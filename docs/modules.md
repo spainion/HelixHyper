@@ -12,6 +12,7 @@
 - **hyperhelix/agents/llm.py** – wrappers for OpenAI and OpenRouter chat models.
 - **hyperhelix/api/routers/scan.py** – endpoint to index directories via `/scan`.
 - **hyperhelix/api/routers/nodes.py** – create, retrieve and list nodes.
+- **hyperhelix/api/routers/edges.py** – create and list edges.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
 - **hyperhelix/agents/llm.list_openrouter_models** – fetch available models.

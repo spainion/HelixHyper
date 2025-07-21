@@ -81,6 +81,16 @@ def test_list_nodes():
     assert ids == {'a', 'b'}
 
 
+def test_list_edges():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b', 'weight': 2.0})
+    resp = client.get('/edges')
+    assert resp.status_code == 200
+    edges = {(e['a'], e['b'], e['weight']) for e in resp.json()}
+    assert edges == {('a', 'b', 2.0)}
+
+
 def test_task_endpoints():
     resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
     assert resp.status_code == 200

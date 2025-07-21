@@ -26,6 +26,14 @@ class EdgeIn(BaseModel):
     weight: float = 1.0
 
 
+class EdgeOut(BaseModel):
+    """Edge representation returned from the API."""
+
+    a: str
+    b: str
+    weight: float
+
+
 class TaskIn(BaseModel):
     """Task creation payload."""
 
