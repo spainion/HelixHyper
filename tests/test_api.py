@@ -3,6 +3,7 @@ import os
 import pytest
 from hyperhelix.api.main import app
 from hyperhelix.core import HyperHelix
+from hyperhelix.node import Node
 
 client = TestClient(app)
 
@@ -89,6 +90,14 @@ def test_list_edges():
     assert resp.status_code == 200
     edges = {(e['a'], e['b'], e['weight']) for e in resp.json()}
     assert edges == {('a', 'b', 2.0)}
+
+
+def test_execute_node_endpoint():
+    called = {}
+    app.state.graph.add_node(Node(id='x', payload=None, execute_fn=lambda _: called.setdefault('x', True)))
+    resp = client.post('/nodes/x/execute')
+    assert resp.status_code == 200
+    assert called.get('x') is True
 
 
 def test_task_endpoints():

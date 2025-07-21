@@ -71,6 +71,9 @@ curl http://localhost:8000/edges
 
 curl http://localhost:8000/walk/a?depth=1
 
+# execute nodes
+curl -X POST http://localhost:8000/nodes/a/execute
+
 # index project source
 curl -X POST http://localhost:8000/scan -d 'path=.'
 
@@ -129,7 +132,7 @@ hyperhelix_system/
 │   │   ├── dependencies.py      # JWT/OAuth2 stubs
 │   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
-│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}
+│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, POST /nodes/{id}/execute
 │   │       ├── edges.py         # POST /edges, GET /edges
 │   │       ├── walk.py          # GET /walk/{start_id}
 │   │       ├── bloom.py         # POST /autobloom/{node_id}

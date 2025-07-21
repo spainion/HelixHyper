@@ -8,6 +8,7 @@ from ..schemas import NodeIn, NodeOut
 from ..dependencies import get_graph
 from ...core import HyperHelix
 from ...node import Node
+from ...execution.executor import execute_node
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -38,3 +39,13 @@ def list_nodes(graph: HyperHelix = Depends(get_graph)) -> list[NodeOut]:
     """Return all nodes in the graph sorted by identifier."""
     nodes = [NodeOut(id=n.id, payload=n.payload) for n in graph.nodes.values()]
     return sorted(nodes, key=lambda n: n.id)
+
+
+@router.post('/nodes/{node_id}/execute')
+def execute_node_endpoint(node_id: str, graph: HyperHelix = Depends(get_graph)) -> dict[str, str]:
+    """Execute the given node and trigger update hooks."""
+    if node_id not in graph.nodes:
+        logger.error("Node %s not found", node_id)
+        raise HTTPException(status_code=404, detail='Not found')
+    execute_node(graph, node_id)
+    return {"status": "executed"}
