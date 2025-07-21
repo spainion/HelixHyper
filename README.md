@@ -89,6 +89,7 @@ curl http://localhost:8000/tasks/plan
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'
 # use OpenRouter
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'
+curl http://localhost:8000/models/openrouter
 ```
 ```
 hyperhelix_system/
@@ -141,7 +142,8 @@ hyperhelix_system/
 │   │       ├── bloom.py         # POST /autobloom/{node_id}
 │   │       ├── scan.py          # POST /scan
 │   │       ├── tasks.py         # POST /tasks
-│   │       └── suggest.py       # POST /suggest
+│   │       ├── suggest.py       # POST /suggest
+│   │       └── models.py        # GET /models/openrouter
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)
@@ -251,6 +253,11 @@ Use `list_openrouter_models()` to retrieve available models from the service:
 from hyperhelix.agents.llm import list_openrouter_models
 models = list_openrouter_models()
 print(models)
+```
+Alternatively, call `GET /models/openrouter` to fetch the list via the API:
+
+```bash
+curl http://localhost:8000/models/openrouter
 ```
 
 ## Contribution Guidelines
