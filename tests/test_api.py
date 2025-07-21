@@ -3,6 +3,7 @@ import os
 import pytest
 from hyperhelix.api.main import app
 from hyperhelix.core import HyperHelix
+from hyperhelix.node import Node
 
 client = TestClient(app)
 
@@ -72,6 +73,43 @@ def test_get_missing_node():
     assert resp.status_code == 404
 
 
+def test_list_nodes():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    resp = client.get('/nodes')
+    assert resp.status_code == 200
+    ids = {n['id'] for n in resp.json()}
+    assert ids == {'a', 'b'}
+
+
+def test_list_edges():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b', 'weight': 2.0})
+    resp = client.get('/edges')
+    assert resp.status_code == 200
+    edges = {(e['a'], e['b'], e['weight']) for e in resp.json()}
+    assert edges == {('a', 'b', 2.0)}
+
+
+def test_summary_endpoint():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    resp = client.get('/summary')
+    assert resp.status_code == 200
+    data = resp.json()['summary']
+    assert '1' in data
+
+
+def test_execute_node_endpoint():
+    called = {}
+    app.state.graph.add_node(Node(id='x', payload=None, execute_fn=lambda _: called.setdefault('x', True)))
+    resp = client.post('/nodes/x/execute')
+    assert resp.status_code == 200
+    assert called.get('x') is True
+    data = resp.json()
+    assert data['id'] == 'x'
+
+
 def test_task_endpoints():
     resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
     assert resp.status_code == 200
@@ -93,4 +131,37 @@ def test_suggest_endpoint():
     resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'openai'})
     assert resp.status_code == 200
     assert 'response' in resp.json()
+
+
+@pytest.mark.skipif(
+    not os.getenv('OPENROUTER_API_KEY'),
+    reason='OPENROUTER_API_KEY not set; skipping live integration test',
+)
+def test_suggest_endpoint_openrouter():
+    resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'openrouter'})
+    assert resp.status_code == 200
+    assert 'response' in resp.json()
+
+
+@pytest.mark.skipif(
+    not os.getenv('OPENROUTER_API_KEY'),
+    reason='OPENROUTER_API_KEY not set; skipping live integration test',
+)
+def test_list_openrouter_models_endpoint():
+    resp = client.get('/models/openrouter')
+    assert resp.status_code == 200
+    assert isinstance(resp.json(), list) and resp.json()
+
+
+def test_suggest_includes_context(monkeypatch):
+    captured = {}
+
+    def fake_generate(self, messages):
+        captured['messages'] = messages
+        return 'ok'
+
+    monkeypatch.setattr('hyperhelix.api.routers.suggest.OpenAIChatModel.generate_response', fake_generate)
+    resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'openai'})
+    assert resp.status_code == 200
+    assert captured['messages'][0]['role'] == 'system'
 

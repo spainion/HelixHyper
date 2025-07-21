@@ -8,14 +8,14 @@ class NodeIn(BaseModel):
     """Incoming node data."""
 
     id: str
-    payload: dict
+    payload: dict | None = None
 
 
 class NodeOut(BaseModel):
     """Node representation returned from the API."""
 
     id: str
-    payload: dict
+    payload: dict | None = None
 
 
 class EdgeIn(BaseModel):
@@ -24,6 +24,14 @@ class EdgeIn(BaseModel):
     a: str
     b: str
     weight: float = 1.0
+
+
+class EdgeOut(BaseModel):
+    """Edge representation returned from the API."""
+
+    a: str
+    b: str
+    weight: float
 
 
 class TaskIn(BaseModel):
