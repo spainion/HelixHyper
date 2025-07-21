@@ -49,6 +49,9 @@ Follow these practices when contributing to ensure consistent builds and clear l
 
 1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` or `OPENROUTER_API_KEY` in your environment.
 2. Run `pytest -q` to verify all modules import and tests succeed before committing.
+   Integration tests that call OpenAI or OpenRouter are automatically skipped if
+   the corresponding `OPENAI_API_KEY` or `OPENROUTER_API_KEY` variables are not
+   present.
 3. Configure logging via `config/logging.yaml`; runtime output goes to `hyperhelix.log` and errors to `errors.log`.
 4. Avoid leaving `TODO` comments in the code—track outstanding work in documentation or the issue tracker.
 

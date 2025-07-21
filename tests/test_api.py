@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+import os
 import pytest
 from hyperhelix.api.main import app
 from hyperhelix.core import HyperHelix
@@ -84,6 +85,10 @@ def test_task_endpoints():
     assert plan.json() == ['t1']
 
 
+@pytest.mark.skipif(
+    not os.getenv('OPENAI_API_KEY'),
+    reason='OPENAI_API_KEY not set; skipping live integration test',
+)
 def test_suggest_endpoint():
     resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'openai'})
     assert resp.status_code == 200
