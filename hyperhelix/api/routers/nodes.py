@@ -35,5 +35,6 @@ def get_node(node_id: str, graph: HyperHelix = Depends(get_graph)) -> NodeOut:
 
 @router.get('/nodes', response_model=List[NodeOut])
 def list_nodes(graph: HyperHelix = Depends(get_graph)) -> list[NodeOut]:
-    """Return all nodes in the graph."""
-    return [NodeOut(id=n.id, payload=n.payload) for n in graph.nodes.values()]
+    """Return all nodes in the graph sorted by identifier."""
+    nodes = [NodeOut(id=n.id, payload=n.payload) for n in graph.nodes.values()]
+    return sorted(nodes, key=lambda n: n.id)
