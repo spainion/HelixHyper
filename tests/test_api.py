@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+import os
 import pytest
 from hyperhelix.api.main import app
 from hyperhelix.core import HyperHelix
@@ -29,3 +30,67 @@ def test_create_edge_and_walk():
     assert walk.status_code == 200
     ids = {n['id'] for n in walk.json()}
     assert ids == {'a', 'b'}
+
+def test_scan_endpoint(tmp_path):
+    app.state.graph = HyperHelix()
+    f = tmp_path / "a.py"
+    f.write_text("x=1")
+    resp = client.post('/scan', json={'path': str(tmp_path)})
+    assert resp.status_code == 200
+    assert f"file:{f.name}" in app.state.graph.nodes
+
+def test_root_endpoint():
+    resp = client.get('/')
+    assert resp.status_code == 200
+    assert resp.json() == {'status': 'ok'}
+
+
+def test_duplicate_node_error():
+    client.post('/nodes', json={'id': 'x', 'payload': {}})
+    resp = client.post('/nodes', json={'id': 'x', 'payload': {}})
+    assert resp.status_code == 400
+
+
+def test_edge_missing_node():
+    resp = client.post('/edges', json={'a': 'x', 'b': 'y'})
+    assert resp.status_code == 404
+
+
+def test_walk_missing_start():
+    resp = client.get('/walk/missing')
+    assert resp.status_code == 404
+
+def test_autobloom():
+    client.post('/nodes', json={'id': 'orig', 'payload': {}})
+    resp = client.post('/autobloom/orig')
+    assert resp.status_code == 200
+    assert 'bloom:orig' in app.state.graph.nodes
+
+
+def test_get_missing_node():
+    resp = client.get('/nodes/none')
+    assert resp.status_code == 404
+
+
+def test_task_endpoints():
+    resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
+    assert resp.status_code == 200
+    resp = client.post('/tasks/t1/assign', json={'user': 'bob'})
+    assert resp.status_code == 200
+    listing = client.get('/tasks')
+    assert listing.status_code == 200
+    assert listing.json()[0]['id'] == 't1'
+    plan = client.get('/tasks/plan')
+    assert plan.status_code == 200
+    assert plan.json() == ['t1']
+
+
+@pytest.mark.skipif(
+    not os.getenv('OPENAI_API_KEY'),
+    reason='OPENAI_API_KEY not set; skipping live integration test',
+)
+def test_suggest_endpoint():
+    resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'openai'})
+    assert resp.status_code == 200
+    assert 'response' in resp.json()
+

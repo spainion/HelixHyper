@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from pydantic import BaseModel
 
 
@@ -23,3 +24,18 @@ class EdgeIn(BaseModel):
     a: str
     b: str
     weight: float = 1.0
+
+
+class TaskIn(BaseModel):
+    """Task creation payload."""
+
+    id: str
+    description: str
+    due: datetime | None = None
+    priority: int = 0
+    assigned_to: str | None = None
+
+
+class TaskOut(TaskIn):
+    """Task representation returned from the API."""
+

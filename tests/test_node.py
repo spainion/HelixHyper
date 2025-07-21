@@ -13,3 +13,7 @@ def test_node_execute():
     assert result == {'a': 1}
     assert called['result'] == {'a': 1}
     assert n.metadata.updated >= n.metadata.created
+
+def test_node_execute_no_fn():
+    n = Node(id='2', payload=None)
+    assert n.execute() is None

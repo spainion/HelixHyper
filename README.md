@@ -24,6 +24,19 @@ You can also run the server via the CLI command:
 python -m hyperhelix.cli.commands serve
 ```
 
+You can index a directory into the running graph with:
+
+```bash
+python -m hyperhelix.cli.commands scan .
+```
+
+The scanner parses ``import`` statements and links files in the graph,
+creating edges for modules that depend on one another.
+
+The `HyperHelix` graph accepts a persistence adapter for automatically storing
+nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
+persist connections as they are created.
+
 Alternatively build and run the provided Dockerfile:
 
 ```bash
@@ -34,8 +47,11 @@ docker run -p 8000:8000 helixhyper
 ## Development Workflow
 Follow these practices when contributing to ensure consistent builds and clear logs:
 
-1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` in your environment.
+1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` or `OPENROUTER_API_KEY` in your environment.
 2. Run `pytest -q` to verify all modules import and tests succeed before committing.
+   Integration tests that call OpenAI or OpenRouter are automatically skipped if
+   the corresponding `OPENAI_API_KEY` or `OPENROUTER_API_KEY` variables are not
+   present.
 3. Configure logging via `config/logging.yaml`; runtime output goes to `hyperhelix.log` and errors to `errors.log`.
 4. Avoid leaving `TODO` comments in the code—track outstanding work in documentation or the issue tracker.
 
@@ -50,6 +66,19 @@ curl -X POST http://localhost:8000/edges -H 'Content-Type: application/json' \
      -d '{"a": "a", "b": "b"}'
 
 curl http://localhost:8000/walk/a?depth=1
+
+# index project source
+curl -X POST http://localhost:8000/scan -d 'path=.'
+
+# manage tasks
+curl -X POST http://localhost:8000/tasks -H 'Content-Type: application/json' \
+     -d '{"id":"t1","description":"demo"}'
+curl -X POST http://localhost:8000/tasks/t1/assign -d 'user=alice'
+curl http://localhost:8000/tasks
+curl http://localhost:8000/tasks/plan
+
+# get code suggestions
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello"}'
 ```
 ```
 hyperhelix_system/
@@ -66,7 +95,7 @@ hyperhelix_system/
 │   ├── node.py                  # Node class (+payload, tags, layer, strand, edges, metadata)
 │   ├── edge.py                  # Edge helper (bidirectional connect, weight updates)
 │   ├── metadata.py              # metadata fields & perception_history logic
-│   ├── core.py                  # HyperHelix class (add_node, add_edge, spiral_walk)
+│   ├── core.py                  # HyperHelix class (add_node, add_edge, spiral_walk, shortest_path)
 │   ├── analytics/               # self-analysis
 │   │   ├── __init__.py
 │   │   ├── importance.py        # compute_importance(node, all_nodes)
@@ -99,7 +128,10 @@ hyperhelix_system/
 │   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}
 │   │       ├── edges.py         # POST /edges
 │   │       ├── walk.py          # GET /walk/{start_id}
-│   │       └── bloom.py         # POST /autobloom/{node_id}
+│   │       ├── bloom.py         # POST /autobloom/{node_id}
+│   │       ├── scan.py          # POST /scan
+│   │       ├── tasks.py         # POST /tasks
+│   │       └── suggest.py       # POST /suggest
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)
@@ -145,7 +177,9 @@ hyperhelix_system/
 The directories above form a cohesive system:
 - **config/** holds runtime constants, logging and persistence settings.
 - **hyperhelix/node.py** defines node fields (id, payload, tags, layer, strand, edges) and metadata (creation time, updates, importance, permanence, perception history) along with execution helpers.
-- **hyperhelix/core.py** provides the `HyperHelix` graph with thread-safe `add_node`, `add_edge` and `spiral_walk` operations.
+- **hyperhelix/core.py** provides the `HyperHelix` graph with thread-safe `add_node`, `add_edge`, `spiral_walk` and `shortest_path` operations.
+- **HyperHelix** can be initialized with a persistence adapter so new nodes and
+  connections are saved automatically.
 - **analytics/** recalculates node importance and permanence on demand.
 - **evolution/evented_engine.py** reacts instantly to insert/update hooks, pruning or weaving without polling.
 - **execution/** bridges external callables (builds, tests, deploys) into graph execution and auto-bloom hooks.
@@ -165,7 +199,49 @@ The graph core validates nodes when creating edges and logs an error if a refere
 The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` in the environment so integrations work correctly.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` and `OPENROUTER_API_KEY` in the environment so integrations work correctly.
+
+### Calling OpenAI directly
+
+```
+curl https://api.openai.com/v1/chat/completions \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"What’s in this image?","image":"data:image/png;base64,....."}],"temperature":0.7,"stream":true}'
+```
+
+### Streaming with OpenRouter
+
+```python
+import json
+import requests
+
+question = "How would you build the tallest building ever?"
+headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"}
+payload = {"model": "openai/gpt-4o", "messages": [{"role": "user", "content": question}], "stream": True}
+buffer = ""
+with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, stream=True) as r:
+    for chunk in r.iter_content(chunk_size=1024, decode_unicode=True):
+        buffer += chunk
+        while "\n" in buffer:
+            line, buffer = buffer.split("\n", 1)
+            if line.startswith("data: "):
+                data = line[6:]
+                if data == "[DONE]":
+                    break
+    print(json.loads(data)["choices"][0]["delta"].get("content", ""), end="")
+```
+
+`OpenRouterChatModel` also provides a `stream_response()` method that returns the
+complete text from a streamed response.
+
+Use `list_openrouter_models()` to retrieve available models from the service:
+
+```python
+from hyperhelix.agents.llm import list_openrouter_models
+models = list_openrouter_models()
+print(models)
+```
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.
