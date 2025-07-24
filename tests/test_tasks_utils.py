@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from hyperhelix.core import HyperHelix
 from hyperhelix.node import Node
@@ -8,7 +8,7 @@ from hyperhelix.tasks import task_manager, sprint_planner
 
 def test_tasks_workflow():
     g = HyperHelix()
-    task = Task(id='t1', description='demo', due=datetime.utcnow())
+    task = Task(id='t1', description='demo', due=datetime.now(timezone.utc))
     task_manager.create_task(g, task)
     task_manager.assign_task(g, 't1', 'alice')
     assert g.nodes['t1'].payload.assigned_to == 'alice'

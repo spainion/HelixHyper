@@ -16,9 +16,9 @@ router = APIRouter()
 def create_task(task: TaskIn, graph: HyperHelix = Depends(get_graph)) -> TaskOut:
     if task.id in graph.nodes:
         raise HTTPException(status_code=400, detail='Task exists')
-    data = Task(**task.dict())
+    data = Task(**task.model_dump())
     task_manager.create_task(graph, data)
-    return TaskOut(**task.dict())
+    return TaskOut(**task.model_dump())
 
 
 @router.post('/tasks/{task_id}/assign')
@@ -45,4 +45,13 @@ def list_tasks(graph: HyperHelix = Depends(get_graph)) -> List[TaskOut]:
 @router.get('/tasks/plan', response_model=List[str])
 def sprint_plan_endpoint(graph: HyperHelix = Depends(get_graph)) -> List[str]:
     return sprint_planner.sprint_plan(graph)
+
+
+@router.get('/tasks/{task_id}', response_model=TaskOut)
+def get_task(task_id: str, graph: HyperHelix = Depends(get_graph)) -> TaskOut:
+    """Retrieve a single task by identifier."""
+    node = graph.nodes.get(task_id)
+    if not node or not isinstance(node.payload, Task):
+        raise HTTPException(status_code=404, detail='Not found')
+    return TaskOut(**node.payload.__dict__)
 
