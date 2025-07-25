@@ -200,6 +200,7 @@ def test_suggest_includes_context(monkeypatch):
         return 'ok'
 
     monkeypatch.setattr('hyperhelix.api.routers.suggest.OpenAIChatModel.generate_response', fake_generate)
+    monkeypatch.setenv('OPENAI_API_KEY', 'test')
     resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'openai'})
     assert resp.status_code == 200
     assert captured['messages'][0]['role'] == 'system'
