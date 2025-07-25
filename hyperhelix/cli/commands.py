@@ -100,11 +100,18 @@ def models(provider: str, query: str, limit: int) -> None:
     from ..agents import llm
 
     provider = provider.lower()
-    if provider == "openrouter":
-        model_list = llm.list_openrouter_models(
-            api_key=os.getenv("OPENROUTER_API_KEY")
-        )
-    else:
-        model_list = llm.list_huggingface_models(search=query, limit=limit)
+    try:
+        if provider == "openrouter":
+            api_key = os.getenv("OPENROUTER_API_KEY")
+            if not api_key:
+                click.echo("OPENROUTER_API_KEY not set")
+                return
+            model_list = llm.list_openrouter_models(api_key=api_key)
+        else:
+            model_list = llm.list_huggingface_models(search=query, limit=limit)
+    except Exception as exc:  # pragma: no cover - network failures
+        click.echo(f"Failed to list models: {exc}")
+        return
+
     for mid in model_list:
         click.echo(mid)

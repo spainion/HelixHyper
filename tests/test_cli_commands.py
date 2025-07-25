@@ -100,8 +100,9 @@ def test_cli_models_openrouter(monkeypatch):
         "hyperhelix.agents.llm.list_openrouter_models",
         lambda api_key=None: ["a", "b"],
     )
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test")
     runner = CliRunner()
-    result = runner.invoke(commands.cli, ["models", "--provider", "openrouter"]) 
+    result = runner.invoke(commands.cli, ["models", "--provider", "openrouter"])
     assert result.exit_code == 0
     assert "a" in result.output
 

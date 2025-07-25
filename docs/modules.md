@@ -29,3 +29,4 @@ List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
 Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.
 Specify a model and stream output with `python -m hyperhelix.cli.commands codex "Hi" --model openai/gpt-4o --stream`.
 List models with `python -m hyperhelix.cli.commands models --provider openrouter`.
+Ensure `OPENROUTER_API_KEY` is configured for OpenRouter listings.

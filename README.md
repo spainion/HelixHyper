@@ -48,6 +48,7 @@ python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model opena
 python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 ```
+Listing models from OpenRouter requires the `OPENROUTER_API_KEY` environment variable.
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
