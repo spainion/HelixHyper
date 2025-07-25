@@ -22,15 +22,17 @@ class OpenAIChatModel(BaseChatModel):
     def __init__(self, model: str = "gpt-3.5-turbo", api_key: str | None = None) -> None:
         """Create an OpenAI chat model wrapper.
 
-        If ``api_key`` is not supplied the ``OPENAI_API_KEY`` environment
-        variable is consulted. Tests monkeypatch the ``generate_response``
-        method and thus do not require a valid key, so a placeholder is used
-        when no key is available.
+        The API key is read from the ``api_key`` argument or the
+        ``OPENAI_API_KEY`` environment variable. A missing key results in a
+        ``RuntimeError`` so tests can monkeypatch ``generate_response`` without
+        actually hitting the API.
         """
         import os
         import openai
 
-        key = api_key or os.getenv("OPENAI_API_KEY") or "test-key"
+        key = api_key or os.getenv("OPENAI_API_KEY")
+        if not key:
+            raise RuntimeError("OPENAI_API_KEY environment variable must be set")
         self.client = openai.OpenAI(api_key=key)
         self.model = model
 
