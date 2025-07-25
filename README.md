@@ -72,6 +72,7 @@ curl http://localhost:8000/edges
 # delete an edge
 curl -X DELETE http://localhost:8000/edges/a/b
 # {"status": "deleted"}
+# deleting a missing edge returns 404
 
 # delete a node
 curl -X DELETE http://localhost:8000/nodes/a

@@ -25,11 +25,11 @@ def create_edge(edge: EdgeIn, graph: HyperHelix = Depends(get_graph)) -> StatusO
 @router.delete('/edges/{a}/{b}', response_model=StatusOut)
 def delete_edge(a: str, b: str, graph: HyperHelix = Depends(get_graph)) -> StatusOut:
     """Remove an edge from the graph."""
-    if a not in graph.nodes or b not in graph.nodes:
-        missing = a if a not in graph.nodes else b
-        logger.error("Edge delete failed missing node %s", missing)
-        raise HTTPException(status_code=404, detail=f"Node {missing} not found")
-    graph.remove_edge(a, b)
+    try:
+        graph.remove_edge(a, b)
+    except KeyError as exc:
+        logger.error("Edge delete failed: %s", exc.args[0])
+        raise HTTPException(status_code=404, detail='Not found')
     return StatusOut(status="deleted")
 
 

@@ -110,6 +110,13 @@ def test_delete_edge():
     assert 'b' not in app.state.graph.nodes['a'].edges
 
 
+def test_delete_missing_edge():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    resp = client.delete('/edges/a/b')
+    assert resp.status_code == 404
+
+
 def test_summary_endpoint():
     client.post('/nodes', json={'id': 'a', 'payload': {}})
     resp = client.get('/summary')

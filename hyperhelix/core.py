@@ -63,8 +63,11 @@ class HyperHelix:
             missing = a if a not in self.nodes else b
             logger.error("Edge removal failed missing node %s", missing)
             raise KeyError(missing)
-        self.nodes[a].edges.pop(b, None)
-        self.nodes[b].edges.pop(a, None)
+        if b not in self.nodes[a].edges:
+            logger.error("Edge %s <-> %s not found", a, b)
+            raise KeyError(f"{a}-{b}")
+        self.nodes[a].edges.pop(b)
+        self.nodes[b].edges.pop(a)
         if self.adapter and hasattr(self.adapter, "remove_edge"):
             self.adapter.remove_edge(a, b)
 
