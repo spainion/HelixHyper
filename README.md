@@ -251,7 +251,7 @@ The graph core validates nodes when creating edges and logs an error if a refere
 The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key. The convenience function `hyperhelix.utils.get_api_key("OPENROUTER_API_KEY")` retrieves keys with a warning if they are missing.
 
 ### Calling OpenAI directly
 

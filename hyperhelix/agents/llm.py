@@ -27,10 +27,10 @@ class OpenAIChatModel(BaseChatModel):
         ``RuntimeError`` so tests can monkeypatch ``generate_response`` without
         actually hitting the API.
         """
-        import os
+        from ..utils import get_api_key
         import openai
 
-        key = api_key or os.getenv("OPENAI_API_KEY", "test")
+        key = api_key or get_api_key("OPENAI_API_KEY", "test")
         self.client = openai.OpenAI(api_key=key)
         self.model = model
 
@@ -47,12 +47,12 @@ class OpenRouterChatModel(BaseChatModel):
     """Chat model that calls the OpenRouter API."""
 
     def __init__(self, model: str = "openai/gpt-4o", api_key: str | None = None) -> None:
-        import os
+        from ..utils import get_api_key
         import httpx  # locally imported to ease mocking in tests
 
         self.httpx = httpx
         self.model = model
-        self.api_key = api_key or os.getenv("OPENROUTER_API_KEY", "test")
+        self.api_key = api_key or get_api_key("OPENROUTER_API_KEY", "test")
 
     def generate_response(self, messages: Sequence[dict]) -> str:
         headers = {
@@ -112,12 +112,12 @@ class HuggingFaceChatModel(BaseChatModel):
     """Use the Hugging Face Inference API for chat completions."""
 
     def __init__(self, model: str = "HuggingFaceH4/zephyr-7b-beta", api_key: str | None = None) -> None:
-        import os
+        from ..utils import get_api_key
         import httpx  # imported locally for easier mocking
 
         self.httpx = httpx
         self.model = model
-        self.api_key = api_key or os.getenv("HUGGINGFACE_API_TOKEN")
+        self.api_key = api_key or get_api_key("HUGGINGFACE_API_TOKEN")
 
     def generate_response(self, messages: Sequence[dict]) -> str:
         prompt = "\n".join(m["content"] for m in messages)
@@ -161,10 +161,10 @@ class TransformersChatModel(BaseChatModel):
 
 def list_openrouter_models(api_key: str | None = None) -> list[str]:
     """Return a list of available model IDs from OpenRouter."""
-    import os
+    from ..utils import get_api_key
     import httpx
 
-    key = api_key or os.getenv("OPENROUTER_API_KEY")
+    key = api_key or get_api_key("OPENROUTER_API_KEY")
     headers = {"Authorization": f"Bearer {key}"} if key else {}
     try:
         resp = httpx.get(

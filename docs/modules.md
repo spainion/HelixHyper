@@ -29,4 +29,4 @@ List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
 Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.
 Specify a model and stream output with `python -m hyperhelix.cli.commands codex "Hi" --model openai/gpt-4o --stream`.
 List models with `python -m hyperhelix.cli.commands models --provider openrouter`.
-The command reads provider keys like `OPENROUTER_API_KEY` from the environment.
+The command reads provider keys like `OPENROUTER_API_KEY` from the environment. Use `hyperhelix.utils.get_api_key()` when accessing keys in your own scripts.

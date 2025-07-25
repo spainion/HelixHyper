@@ -102,7 +102,9 @@ def models(provider: str, query: str, limit: int) -> None:
     provider = provider.lower()
     try:
         if provider == "openrouter":
-            api_key = os.getenv("OPENROUTER_API_KEY")
+            from ..utils import get_api_key
+
+            api_key = get_api_key("OPENROUTER_API_KEY")
             if not api_key:
                 click.echo("OPENROUTER_API_KEY not set")
                 return
