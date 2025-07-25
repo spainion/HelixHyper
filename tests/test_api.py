@@ -117,6 +117,20 @@ def test_delete_missing_edge():
     assert resp.status_code == 404
 
 
+def test_list_node_edges():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b'})
+    resp = client.get('/edges/a')
+    assert resp.status_code == 200
+    assert resp.json() == [{'a': 'a', 'b': 'b', 'weight': 1.0}]
+
+
+def test_list_edges_missing_node():
+    resp = client.get('/edges/missing')
+    assert resp.status_code == 404
+
+
 def test_summary_endpoint():
     client.post('/nodes', json={'id': 'a', 'payload': {}})
     resp = client.get('/summary')

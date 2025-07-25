@@ -69,6 +69,9 @@ curl http://localhost:8000/nodes
 
 curl http://localhost:8000/edges
 
+curl http://localhost:8000/edges/a
+# [{"a": "a", "b": "b", "weight": 1.0}]
+
 # delete an edge
 curl -X DELETE http://localhost:8000/edges/a/b
 # {"status": "deleted"}
@@ -150,7 +153,7 @@ hyperhelix_system/
 │   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
 │   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, DELETE /nodes/{id}, POST /nodes/{id}/execute
-│   │       ├── edges.py         # POST /edges, DELETE /edges/{a}/{b}, GET /edges
+│   │       ├── edges.py         # POST /edges, DELETE /edges/{a}/{b}, GET /edges, GET /edges/{id}
 │   │       ├── walk.py          # GET /walk/{start_id}
 │   │       ├── bloom.py         # POST /autobloom/{node_id}
 │   │       ├── scan.py          # POST /scan

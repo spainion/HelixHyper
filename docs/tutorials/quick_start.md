@@ -6,8 +6,9 @@
 4. Use the provided HTTP routes to create nodes and edges.
 5. Retrieve existing nodes with `curl http://localhost:8000/nodes`.
 6. List created edges with `curl http://localhost:8000/edges`.
-7. Delete an edge with `curl -X DELETE http://localhost:8000/edges/<a>/<b>` and expect `{"status": "deleted"}` in the response.
-8. Delete a node with `curl -X DELETE http://localhost:8000/nodes/<id>` and
+7. Get edges for a node with `curl http://localhost:8000/edges/<id>`.
+8. Delete an edge with `curl -X DELETE http://localhost:8000/edges/<a>/<b>` and expect `{"status": "deleted"}` in the response.
+9. Delete a node with `curl -X DELETE http://localhost:8000/nodes/<id>` and
    expect `{"status": "deleted"}` in the response.
 9. Get a quick graph summary with `curl http://localhost:8000/summary`.
 10. Execute a node with `curl -X POST http://localhost:8000/nodes/<id>/execute` and receive the updated node back.

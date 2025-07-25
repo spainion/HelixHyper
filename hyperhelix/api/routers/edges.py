@@ -33,6 +33,17 @@ def delete_edge(a: str, b: str, graph: HyperHelix = Depends(get_graph)) -> Statu
     return StatusOut(status="deleted")
 
 
+@router.get('/edges/{node_id}', response_model=List[EdgeOut])
+def list_node_edges(node_id: str, graph: HyperHelix = Depends(get_graph)) -> list[EdgeOut]:
+    """Return all edges connected to a specific node."""
+    if node_id not in graph.nodes:
+        logger.error("Node %s not found", node_id)
+        raise HTTPException(status_code=404, detail='Not found')
+    node = graph.nodes[node_id]
+    edges = [EdgeOut(a=node_id, b=b, weight=w) for b, w in node.edges.items()]
+    return sorted(edges, key=lambda e: e.b)
+
+
 @router.get('/edges', response_model=List[EdgeOut])
 def list_edges(graph: HyperHelix = Depends(get_graph)) -> list[EdgeOut]:
     """Return all unique edges in the graph."""

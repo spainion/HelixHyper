@@ -13,7 +13,7 @@
 - **hyperhelix/agents/context.py** – build system prompts from the graph.
 - **hyperhelix/api/routers/scan.py** – endpoint to index directories via `/scan`.
 - **hyperhelix/api/routers/nodes.py** – create, retrieve, list, delete and execute nodes.
-- **hyperhelix/api/routers/edges.py** – create, delete and list edges.
+- **hyperhelix/api/routers/edges.py** – create, delete and list edges (global or by node).
 - **hyperhelix/api/routers/models.py** – list available OpenRouter models.
 - **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
