@@ -47,3 +47,10 @@ class TaskIn(BaseModel):
 class TaskOut(TaskIn):
     """Task representation returned from the API."""
 
+
+class StatusOut(BaseModel):
+    """Simple status message returned from API endpoints."""
+
+    status: str
+
+

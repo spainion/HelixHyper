@@ -4,23 +4,27 @@
 - **hyperhelix/** – core engine and subpackages for analytics, evolution, execution and more.
 - **hyperhelix/api/** – FastAPI server exposing REST routes.
 - **hyperhelix/cli/** – command-line interface helpers.
-- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `spiral_walk` and `shortest_path`.
+- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `remove_edge`, `remove_node`, `spiral_walk` and `shortest_path`.
 - **persistence adapters** – implement `save_node`, `load_node`, `save_edge` and
   `load_edges` for automatic storage when supplied to `HyperHelix`.
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
 - **hyperhelix/agents/code_scanner.py** – scans directories, stores Python source and links files via imports.
-- **hyperhelix/agents/llm.py** – wrappers for OpenAI and OpenRouter chat models.
+ - **hyperhelix/agents/llm.py** – wrappers for OpenAI, OpenRouter, HuggingFace and local Transformers chat models.
 - **hyperhelix/agents/context.py** – build system prompts from the graph.
 - **hyperhelix/api/routers/scan.py** – endpoint to index directories via `/scan`.
-- **hyperhelix/api/routers/nodes.py** – create, retrieve, list and execute nodes.
-- **hyperhelix/api/routers/edges.py** – create and list edges.
-- **hyperhelix/api/routers/models.py** – list available OpenRouter models.
+- **hyperhelix/api/routers/nodes.py** – create, retrieve, list, delete and execute nodes.
+- **hyperhelix/api/routers/edges.py** – create, delete and list edges (global or by node).
+ - **hyperhelix/api/routers/models.py** – list available OpenRouter or HuggingFace models.
 - **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
-- **hyperhelix/agents/llm.list_openrouter_models** – fetch available models.
+ - **hyperhelix/agents/llm.list_openrouter_models** – fetch OpenRouter models.
+ - **hyperhelix/agents/llm.list_huggingface_models** – fetch HuggingFace models.
 - **frontend/** – example React + Three.js client.
 - **tests/** – unit tests covering the system.
 
 Start the API from the command line with `python -m hyperhelix.cli.commands serve`.
 Use `python -m hyperhelix.cli.commands scan .` to index a directory.
+List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
+Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.
+Specify a model and stream output with `python -m hyperhelix.cli.commands codex "Hi" --model openai/gpt-4o --stream`.

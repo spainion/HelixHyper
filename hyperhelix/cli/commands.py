@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import click
 
 
@@ -26,3 +27,60 @@ def scan(path: str) -> None:
     graph = app.state.graph
     scan_repository(graph, path)
     click.echo(f"{len(graph.nodes)} nodes")
+
+
+@cli.command()
+@click.argument("repo")
+def issues(repo: str) -> None:
+    """List open issues for a GitHub repository."""
+    import httpx
+
+    token = os.getenv("GITHUB_TOKEN")
+    headers = {"Authorization": f"token {token}"} if token else {}
+    url = f"https://api.github.com/repos/{repo}/issues"
+    resp = httpx.get(url, headers=headers, timeout=10)
+    resp.raise_for_status()
+    for issue in resp.json():
+        click.echo(f"#{issue['number']}: {issue['title']}")
+
+
+@cli.command()
+@click.argument("prompt")
+@click.option(
+    "--provider",
+    type=click.Choice(["openai", "openrouter", "huggingface", "local"], case_sensitive=False),
+    default="openrouter",
+    show_default=True,
+)
+@click.option("--model", default=None, help="Model identifier to use")
+@click.option("--stream", is_flag=True, help="Stream output if supported")
+def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
+    """Return a quick LLM response using the configured provider."""
+    from ..agents import llm
+
+    provider = provider.lower()
+    if provider == "openai":
+        chat = llm.OpenAIChatModel(
+            model=model or "gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY")
+        )
+        response = chat.generate_response([{"role": "user", "content": prompt}])
+    elif provider == "openrouter":
+        chat = llm.OpenRouterChatModel(
+            model=model or "openai/gpt-4o",
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+        )
+        if stream:
+            response = chat.stream_response([{"role": "user", "content": prompt}])
+        else:
+            response = chat.generate_response([{"role": "user", "content": prompt}])
+    elif provider == "huggingface":
+        chat = llm.HuggingFaceChatModel(
+            model=model or "HuggingFaceH4/zephyr-7b-beta",
+            api_key=os.getenv("HUGGINGFACE_API_TOKEN"),
+        )
+        response = chat.generate_response([{"role": "user", "content": prompt}])
+    else:
+        chat = llm.TransformersChatModel(model=model or "sshleifer/tiny-gpt2")
+        response = chat.generate_response([{"role": "user", "content": prompt}])
+
+    click.echo(response)

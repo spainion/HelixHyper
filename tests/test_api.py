@@ -73,6 +73,14 @@ def test_get_missing_node():
     assert resp.status_code == 404
 
 
+def test_delete_node():
+    client.post('/nodes', json={'id': 'z', 'payload': {}})
+    resp = client.delete('/nodes/z')
+    assert resp.status_code == 200
+    assert resp.json()['status'] == 'deleted'
+    assert 'z' not in app.state.graph.nodes
+
+
 def test_list_nodes():
     client.post('/nodes', json={'id': 'a', 'payload': {}})
     client.post('/nodes', json={'id': 'b', 'payload': {}})
@@ -90,6 +98,37 @@ def test_list_edges():
     assert resp.status_code == 200
     edges = {(e['a'], e['b'], e['weight']) for e in resp.json()}
     assert edges == {('a', 'b', 2.0)}
+
+
+def test_delete_edge():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b'})
+    resp = client.delete('/edges/a/b')
+    assert resp.status_code == 200
+    assert resp.json()['status'] == 'deleted'
+    assert 'b' not in app.state.graph.nodes['a'].edges
+
+
+def test_delete_missing_edge():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    resp = client.delete('/edges/a/b')
+    assert resp.status_code == 404
+
+
+def test_list_node_edges():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b'})
+    resp = client.get('/edges/a')
+    assert resp.status_code == 200
+    assert resp.json() == [{'a': 'a', 'b': 'b', 'weight': 1.0}]
+
+
+def test_list_edges_missing_node():
+    resp = client.get('/edges/missing')
+    assert resp.status_code == 404
 
 
 def test_summary_endpoint():
@@ -144,6 +183,16 @@ def test_suggest_endpoint_openrouter():
 
 
 @pytest.mark.skipif(
+    not os.getenv('HUGGINGFACE_API_TOKEN'),
+    reason='HUGGINGFACE_API_TOKEN not set; skipping live integration test',
+)
+def test_suggest_endpoint_huggingface():
+    resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'huggingface'})
+    assert resp.status_code == 200
+    assert 'response' in resp.json()
+
+
+@pytest.mark.skipif(
     not os.getenv('OPENROUTER_API_KEY'),
     reason='OPENROUTER_API_KEY not set; skipping live integration test',
 )
@@ -153,15 +202,33 @@ def test_list_openrouter_models_endpoint():
     assert isinstance(resp.json(), list) and resp.json()
 
 
-def test_suggest_includes_context(monkeypatch):
-    captured = {}
+def test_list_huggingface_models_endpoint(monkeypatch):
+    monkeypatch.setattr(
+        'hyperhelix.api.routers.models.list_huggingface_models',
+        lambda search='gpt2', limit=5: ['model-a', 'model-b'],
+    )
+    resp = client.get('/models/huggingface?q=gpt2')
+    assert resp.status_code == 200
+    assert resp.json() == ['model-a', 'model-b']
 
-    def fake_generate(self, messages):
-        captured['messages'] = messages
-        return 'ok'
 
-    monkeypatch.setattr('hyperhelix.api.routers.suggest.OpenAIChatModel.generate_response', fake_generate)
+def test_suggest_includes_context(capture_openai):
     resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'openai'})
     assert resp.status_code == 200
-    assert captured['messages'][0]['role'] == 'system'
+    if capture_openai is not None:
+        assert capture_openai['messages'][0]['role'] == 'system'
+
+
+def test_suggest_includes_context_hf(capture_huggingface):
+    resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'huggingface'})
+    assert resp.status_code == 200
+    if capture_huggingface is not None:
+        assert capture_huggingface['messages'][0]['role'] == 'system'
+
+
+def test_suggest_includes_context_local(capture_local):
+    resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'local'})
+    assert resp.status_code == 200
+    if capture_local is not None:
+        assert capture_local['messages'][0]['role'] == 'system'
 

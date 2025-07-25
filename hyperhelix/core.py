@@ -56,6 +56,31 @@ class HyperHelix:
         if self.adapter:
             self.adapter.save_edge(a, b, weight)
 
+    def remove_edge(self, a: str, b: str) -> None:
+        """Remove an edge between two nodes."""
+        logger.debug("Removing edge %s <-> %s", a, b)
+        if a not in self.nodes or b not in self.nodes:
+            missing = a if a not in self.nodes else b
+            logger.error("Edge removal failed missing node %s", missing)
+            raise KeyError(missing)
+        if b not in self.nodes[a].edges:
+            logger.error("Edge %s <-> %s not found", a, b)
+            raise KeyError(f"{a}-{b}")
+        self.nodes[a].edges.pop(b)
+        self.nodes[b].edges.pop(a)
+        if self.adapter and hasattr(self.adapter, "remove_edge"):
+            self.adapter.remove_edge(a, b)
+
+    def remove_node(self, node_id: str) -> None:
+        """Remove a node and any edges referencing it."""
+        logger.debug("Removing node %s", node_id)
+        if node_id not in self.nodes:
+            logger.error("Node %s not found", node_id)
+            raise KeyError(node_id)
+        for other in self.nodes.values():
+            other.edges.pop(node_id, None)
+        del self.nodes[node_id]
+
     def find_nodes_by_tag(self, tag: str) -> list[Node]:
         """Return all nodes containing the given tag."""
         logger.debug("Searching nodes with tag %s", tag)

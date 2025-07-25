@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 import logging
 
-from ..schemas import NodeIn, NodeOut
+from ..schemas import NodeIn, NodeOut, StatusOut
 from ..dependencies import get_graph
 from ...core import HyperHelix
 from ...node import Node
@@ -32,6 +32,16 @@ def get_node(node_id: str, graph: HyperHelix = Depends(get_graph)) -> NodeOut:
         logger.error("Node %s not found", node_id)
         raise HTTPException(status_code=404, detail='Not found')
     return NodeOut(id=node.id, payload=node.payload)
+
+
+@router.delete('/nodes/{node_id}', response_model=StatusOut)
+def delete_node(node_id: str, graph: HyperHelix = Depends(get_graph)) -> StatusOut:
+    """Remove a node from the graph."""
+    if node_id not in graph.nodes:
+        logger.error("Node %s not found", node_id)
+        raise HTTPException(status_code=404, detail='Not found')
+    graph.remove_node(node_id)
+    return StatusOut(status="deleted")
 
 
 @router.get('/nodes', response_model=List[NodeOut])

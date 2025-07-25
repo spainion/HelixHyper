@@ -16,9 +16,9 @@ router = APIRouter()
 def create_task(task: TaskIn, graph: HyperHelix = Depends(get_graph)) -> TaskOut:
     if task.id in graph.nodes:
         raise HTTPException(status_code=400, detail='Task exists')
-    data = Task(**task.dict())
+    data = Task(**task.model_dump())
     task_manager.create_task(graph, data)
-    return TaskOut(**task.dict())
+    return TaskOut(**task.model_dump())
 
 
 @router.post('/tasks/{task_id}/assign')

@@ -33,6 +33,20 @@ python -m hyperhelix.cli.commands scan .
 The scanner parses ``import`` statements and links files in the graph,
 creating edges for modules that depend on one another.
 
+List open GitHub issues with:
+
+```bash
+python -m hyperhelix.cli.commands issues owner/repo
+```
+
+Quickly get an LLM response using:
+
+```bash
+python -m hyperhelix.cli.commands codex "Hello" --provider openrouter
+python -m hyperhelix.cli.commands codex "Hello" --provider local
+python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model openai/gpt-4o --stream
+```
+
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
 persist connections as they are created.
@@ -49,6 +63,7 @@ Follow these practices when contributing to ensure consistent builds and clear l
 
 1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` or `OPENROUTER_API_KEY` in your environment.
 2. Run `pytest -q` to verify all modules import and tests succeed before committing.
+   Use `scripts/test_with_llm.sh` to run tests against live LLMs by setting `USE_REAL_LLM=1` automatically.
    Integration tests that call OpenAI or OpenRouter are automatically skipped if
    the corresponding `OPENAI_API_KEY` or `OPENROUTER_API_KEY` variables are not
    present.
@@ -68,6 +83,19 @@ curl -X POST http://localhost:8000/edges -H 'Content-Type: application/json' \
 curl http://localhost:8000/nodes
 
 curl http://localhost:8000/edges
+
+curl http://localhost:8000/edges/a
+# [{"a": "a", "b": "b", "weight": 1.0}]
+
+# delete an edge
+curl -X DELETE http://localhost:8000/edges/a/b
+# {"status": "deleted"}
+# deleting a missing edge returns 404
+
+# delete a node
+curl -X DELETE http://localhost:8000/nodes/a
+# {"status": "deleted"}
+All edges referencing the node will be dropped.
 
 curl http://localhost:8000/walk/a?depth=1
 
@@ -93,6 +121,11 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"ope
 # use OpenRouter
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'
 curl http://localhost:8000/models/openrouter
+# use HuggingFace
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"huggingface"}'
+# use a local Transformers model
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"local"}'
+curl http://localhost:8000/models/huggingface?q=gpt2
 ```
 ```
 hyperhelix_system/
@@ -139,8 +172,8 @@ hyperhelix_system/
 │   │   ├── dependencies.py      # JWT/OAuth2 stubs
 │   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
-│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, POST /nodes/{id}/execute
-│   │       ├── edges.py         # POST /edges, GET /edges
+│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, DELETE /nodes/{id}, POST /nodes/{id}/execute
+│   │       ├── edges.py         # POST /edges, DELETE /edges/{a}/{b}, GET /edges, GET /edges/{id}
 │   │       ├── walk.py          # GET /walk/{start_id}
 │   │       ├── bloom.py         # POST /autobloom/{node_id}
 │   │       ├── scan.py          # POST /scan
@@ -215,7 +248,7 @@ The graph core validates nodes when creating edges and logs an error if a refere
 The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` and `OPENROUTER_API_KEY` in the environment so integrations work correctly.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key.
 
 ### Calling OpenAI directly
 
@@ -262,6 +295,15 @@ Alternatively, call `GET /models/openrouter` to fetch the list via the API:
 
 ```bash
 curl http://localhost:8000/models/openrouter
+```
+
+### Using the HuggingFace Inference API
+
+```python
+from hyperhelix.agents.llm import HuggingFaceChatModel
+model = HuggingFaceChatModel(api_key=os.getenv('HUGGINGFACE_API_TOKEN'))
+resp = model.generate_response([{'role': 'user', 'content': 'Hello'}])
+print(resp)
 ```
 
 ## Contribution Guidelines

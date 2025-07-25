@@ -20,9 +20,18 @@ class OpenAIChatModel(BaseChatModel):
     """Simple OpenAI chat completion wrapper."""
 
     def __init__(self, model: str = "gpt-3.5-turbo", api_key: str | None = None) -> None:
+        """Create an OpenAI chat model wrapper.
+
+        The API key is read from the ``api_key`` argument or the
+        ``OPENAI_API_KEY`` environment variable. A missing key results in a
+        ``RuntimeError`` so tests can monkeypatch ``generate_response`` without
+        actually hitting the API.
+        """
+        import os
         import openai
 
-        self.client = openai.OpenAI(api_key=api_key)
+        key = api_key or os.getenv("OPENAI_API_KEY", "test")
+        self.client = openai.OpenAI(api_key=key)
         self.model = model
 
     def generate_response(self, messages: Sequence[dict]) -> str:
@@ -98,6 +107,56 @@ class OpenRouterChatModel(BaseChatModel):
             raise
 
 
+class HuggingFaceChatModel(BaseChatModel):
+    """Use the Hugging Face Inference API for chat completions."""
+
+    def __init__(self, model: str = "HuggingFaceH4/zephyr-7b-beta", api_key: str | None = None) -> None:
+        import httpx  # imported locally for easier mocking
+
+        self.httpx = httpx
+        self.model = model
+        self.api_key = api_key
+
+    def generate_response(self, messages: Sequence[dict]) -> str:
+        prompt = "\n".join(m["content"] for m in messages)
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
+        url = f"https://api-inference.huggingface.co/models/{self.model}"
+        try:
+            resp = self.httpx.post(url, json={"inputs": prompt}, headers=headers, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            if isinstance(data, list) and data and "generated_text" in data[0]:
+                return data[0]["generated_text"]
+            if isinstance(data, dict) and "generated_text" in data:
+                return data["generated_text"]
+            raise RuntimeError("Unexpected response")
+        except Exception:  # pragma: no cover - network failures
+            logger.exception("HuggingFace request failed")
+            raise
+
+
+class TransformersChatModel(BaseChatModel):
+    """Run a local Hugging Face model via ``transformers``."""
+
+    def __init__(self, model: str = "sshleifer/tiny-gpt2") -> None:
+        from transformers import pipeline  # local import for optional dependency
+
+        self.pipeline = pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=model,
+            max_new_tokens=50,
+        )
+
+    def generate_response(self, messages: Sequence[dict]) -> str:
+        prompt = "\n".join(m["content"] for m in messages)
+        try:
+            result = self.pipeline(prompt, num_return_sequences=1)
+            return result[0]["generated_text"]
+        except Exception:  # pragma: no cover - network failures
+            logger.exception("Transformers request failed")
+            raise
+
 def list_openrouter_models(api_key: str | None = None) -> list[str]:
     """Return a list of available model IDs from OpenRouter."""
     import httpx
@@ -114,5 +173,20 @@ def list_openrouter_models(api_key: str | None = None) -> list[str]:
         return [m["id"] for m in data.get("data", [])]
     except Exception:  # pragma: no cover - network failures
         logger.exception("Failed to list models")
+        raise
+
+
+def list_huggingface_models(search: str = "gpt2", limit: int = 5) -> list[str]:
+    """Return popular Hugging Face models matching ``search``."""
+    import httpx
+
+    params = {"search": search, "limit": limit, "sort": "downloads", "direction": -1}
+    try:
+        resp = httpx.get("https://huggingface.co/api/models", params=params, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return [m["modelId"] for m in data]
+    except Exception:  # pragma: no cover - network failures
+        logger.exception("Failed to list HuggingFace models")
         raise
 
