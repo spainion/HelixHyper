@@ -8,10 +8,9 @@
 6. List created edges with `curl http://localhost:8000/edges`.
 7. Get edges for a node with `curl http://localhost:8000/edges/<id>`.
 8. Delete an edge with `curl -X DELETE http://localhost:8000/edges/<a>/<b>` and expect `{"status": "deleted"}` in the response.
-9. Delete a node with `curl -X DELETE http://localhost:8000/nodes/<id>` and
-   expect `{"status": "deleted"}` in the response.
-9. Get a quick graph summary with `curl http://localhost:8000/summary`.
-10. Execute a node with `curl -X POST http://localhost:8000/nodes/<id>/execute` and receive the updated node back.
-11. Request code suggestions with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'` (includes a graph summary automatically).
-12. Use OpenRouter with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'`.
-13. List OpenRouter models with `curl http://localhost:8000/models/openrouter`.
+9. Delete a node with `curl -X DELETE http://localhost:8000/nodes/<id>` and expect `{"status": "deleted"}` in the response.
+10. Get a quick graph summary with `curl http://localhost:8000/summary`.
+11. Execute a node with `curl -X POST http://localhost:8000/nodes/<id>/execute` and receive the updated node back.
+12. Request code suggestions with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'` (includes a graph summary automatically).
+13. Use OpenRouter with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'`.
+14. List OpenRouter models with `curl http://localhost:8000/models/openrouter`.
