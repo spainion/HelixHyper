@@ -15,3 +15,5 @@
 13. Use OpenRouter with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'`.
 14. List OpenRouter models with `curl http://localhost:8000/models/openrouter`.
 15. Use HuggingFace with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"huggingface"}'`.
+16. List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
+17. Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hello"`.

@@ -24,3 +24,5 @@
 
 Start the API from the command line with `python -m hyperhelix.cli.commands serve`.
 Use `python -m hyperhelix.cli.commands scan .` to index a directory.
+List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
+Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.

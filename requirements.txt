@@ -7,3 +7,4 @@ qdrant-client
 PyYAML
 openai
 huggingface_hub
+httpx

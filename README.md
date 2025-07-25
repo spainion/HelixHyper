@@ -33,6 +33,18 @@ python -m hyperhelix.cli.commands scan .
 The scanner parses ``import`` statements and links files in the graph,
 creating edges for modules that depend on one another.
 
+List open GitHub issues with:
+
+```bash
+python -m hyperhelix.cli.commands issues owner/repo
+```
+
+Quickly get an LLM response using:
+
+```bash
+python -m hyperhelix.cli.commands codex "Hello" --provider openrouter
+```
+
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
 persist connections as they are created.
