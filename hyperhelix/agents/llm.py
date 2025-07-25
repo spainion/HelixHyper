@@ -20,9 +20,18 @@ class OpenAIChatModel(BaseChatModel):
     """Simple OpenAI chat completion wrapper."""
 
     def __init__(self, model: str = "gpt-3.5-turbo", api_key: str | None = None) -> None:
+        """Create an OpenAI chat model wrapper.
+
+        If ``api_key`` is not supplied the ``OPENAI_API_KEY`` environment
+        variable is consulted. Tests monkeypatch the ``generate_response``
+        method and thus do not require a valid key, so a placeholder is used
+        when no key is available.
+        """
+        import os
         import openai
 
-        self.client = openai.OpenAI(api_key=api_key)
+        key = api_key or os.getenv("OPENAI_API_KEY") or "test-key"
+        self.client = openai.OpenAI(api_key=key)
         self.model = model
 
     def generate_response(self, messages: Sequence[dict]) -> str:
