@@ -49,6 +49,7 @@ Follow these practices when contributing to ensure consistent builds and clear l
 
 1. Install dependencies with `pip install -r requirements.txt` and set any required keys such as `OPENAI_API_KEY` or `OPENROUTER_API_KEY` in your environment.
 2. Run `pytest -q` to verify all modules import and tests succeed before committing.
+   Use `scripts/test_with_llm.sh` to run tests against live LLMs by setting `USE_REAL_LLM=1` automatically.
    Integration tests that call OpenAI or OpenRouter are automatically skipped if
    the corresponding `OPENAI_API_KEY` or `OPENROUTER_API_KEY` variables are not
    present.
