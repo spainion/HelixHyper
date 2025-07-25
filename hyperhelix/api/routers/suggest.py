@@ -9,6 +9,7 @@ from ...agents.llm import (
     OpenAIChatModel,
     OpenRouterChatModel,
     HuggingFaceChatModel,
+    TransformersChatModel,
 )
 from ...agents.context import graph_summary
 
@@ -31,6 +32,8 @@ def suggest(
             model=model or 'HuggingFaceH4/zephyr-7b-beta',
             api_key=os.getenv('HUGGINGFACE_API_TOKEN'),
         )
+    elif provider in {'local', 'transformers'}:
+        llm = TransformersChatModel(model=model or 'sshleifer/tiny-gpt2')
     else:
         raise HTTPException(status_code=400, detail='Unknown provider')
     messages = [

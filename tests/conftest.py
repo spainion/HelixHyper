@@ -27,3 +27,20 @@ def capture_huggingface(monkeypatch):
             return "ok"
         monkeypatch.setattr(suggest.HuggingFaceChatModel, "generate_response", fake_generate)
     yield captured
+
+
+@pytest.fixture
+def capture_local(monkeypatch):
+    """Patch ``TransformersChatModel`` unless live tests requested."""
+    captured: dict | None = {} if os.getenv("USE_REAL_LLM", "").lower() not in {"1", "true", "yes"} else None
+    if captured is not None:
+        class FakeModel:
+            def __init__(self, *a, **kw):
+                pass
+
+            def generate_response(self, messages):
+                captured["messages"] = messages
+                return "ok"
+
+        monkeypatch.setattr(suggest, "TransformersChatModel", FakeModel)
+    yield captured

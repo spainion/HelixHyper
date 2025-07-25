@@ -43,6 +43,7 @@ Quickly get an LLM response using:
 
 ```bash
 python -m hyperhelix.cli.commands codex "Hello" --provider openrouter
+python -m hyperhelix.cli.commands codex "Hello" --provider local
 ```
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
@@ -121,6 +122,9 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"ope
 curl http://localhost:8000/models/openrouter
 # use HuggingFace
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"huggingface"}'
+# use a local Transformers model
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"local"}'
+curl http://localhost:8000/models/huggingface?q=gpt2
 ```
 ```
 hyperhelix_system/

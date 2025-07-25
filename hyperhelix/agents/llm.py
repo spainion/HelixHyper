@@ -134,6 +134,29 @@ class HuggingFaceChatModel(BaseChatModel):
             logger.exception("HuggingFace request failed")
             raise
 
+
+class TransformersChatModel(BaseChatModel):
+    """Run a local Hugging Face model via ``transformers``."""
+
+    def __init__(self, model: str = "sshleifer/tiny-gpt2") -> None:
+        from transformers import pipeline  # local import for optional dependency
+
+        self.pipeline = pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=model,
+            max_new_tokens=50,
+        )
+
+    def generate_response(self, messages: Sequence[dict]) -> str:
+        prompt = "\n".join(m["content"] for m in messages)
+        try:
+            result = self.pipeline(prompt, num_return_sequences=1)
+            return result[0]["generated_text"]
+        except Exception:  # pragma: no cover - network failures
+            logger.exception("Transformers request failed")
+            raise
+
 def list_openrouter_models(api_key: str | None = None) -> list[str]:
     """Return a list of available model IDs from OpenRouter."""
     import httpx
@@ -150,5 +173,20 @@ def list_openrouter_models(api_key: str | None = None) -> list[str]:
         return [m["id"] for m in data.get("data", [])]
     except Exception:  # pragma: no cover - network failures
         logger.exception("Failed to list models")
+        raise
+
+
+def list_huggingface_models(search: str = "gpt2", limit: int = 5) -> list[str]:
+    """Return popular Hugging Face models matching ``search``."""
+    import httpx
+
+    params = {"search": search, "limit": limit, "sort": "downloads", "direction": -1}
+    try:
+        resp = httpx.get("https://huggingface.co/api/models", params=params, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return [m["modelId"] for m in data]
+    except Exception:  # pragma: no cover - network failures
+        logger.exception("Failed to list HuggingFace models")
         raise
 

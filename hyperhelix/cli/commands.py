@@ -48,7 +48,7 @@ def issues(repo: str) -> None:
 @click.argument("prompt")
 @click.option(
     "--provider",
-    type=click.Choice(["openai", "openrouter", "huggingface"], case_sensitive=False),
+    type=click.Choice(["openai", "openrouter", "huggingface", "local"], case_sensitive=False),
     default="openrouter",
     show_default=True,
 )
@@ -61,8 +61,10 @@ def codex(prompt: str, provider: str) -> None:
         model = llm.OpenAIChatModel(api_key=os.getenv("OPENAI_API_KEY"))
     elif provider == "openrouter":
         model = llm.OpenRouterChatModel(api_key=os.getenv("OPENROUTER_API_KEY"))
-    else:
+    elif provider == "huggingface":
         model = llm.HuggingFaceChatModel(api_key=os.getenv("HUGGINGFACE_API_TOKEN"))
+    else:
+        model = llm.TransformersChatModel()
 
     response = model.generate_response([{"role": "user", "content": prompt}])
     click.echo(response)

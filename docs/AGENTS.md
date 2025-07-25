@@ -20,5 +20,5 @@ Configuration files include:
 - `default.yaml` for runtime settings like strand counts.
 - `persistence.yaml` for database connection details.
 Update these along with `logging.yaml` when deploying to new environments.
-For LLM integration set provider API keys (e.g. `OPENAI_API_KEY`, `OPENROUTER_API_KEY`) in the environment before running the application.
+For LLM integration set provider API keys (e.g. `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `HUGGINGFACE_API_TOKEN`) in the environment before running the application. Local models require the `transformers` package.
 Each package directory may also contain an `AGENTS.md` with specialized instructions.

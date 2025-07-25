@@ -202,6 +202,16 @@ def test_list_openrouter_models_endpoint():
     assert isinstance(resp.json(), list) and resp.json()
 
 
+def test_list_huggingface_models_endpoint(monkeypatch):
+    monkeypatch.setattr(
+        'hyperhelix.api.routers.models.list_huggingface_models',
+        lambda search='gpt2', limit=5: ['model-a', 'model-b'],
+    )
+    resp = client.get('/models/huggingface?q=gpt2')
+    assert resp.status_code == 200
+    assert resp.json() == ['model-a', 'model-b']
+
+
 def test_suggest_includes_context(capture_openai):
     resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'openai'})
     assert resp.status_code == 200
@@ -214,4 +224,11 @@ def test_suggest_includes_context_hf(capture_huggingface):
     assert resp.status_code == 200
     if capture_huggingface is not None:
         assert capture_huggingface['messages'][0]['role'] == 'system'
+
+
+def test_suggest_includes_context_local(capture_local):
+    resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'local'})
+    assert resp.status_code == 200
+    if capture_local is not None:
+        assert capture_local['messages'][0]['role'] == 'system'
 

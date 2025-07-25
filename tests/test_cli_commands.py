@@ -59,3 +59,18 @@ def test_cli_codex(monkeypatch):
     result = runner.invoke(commands.cli, ["codex", "ping"])
     assert result.exit_code == 0
     assert "pong" in result.output
+
+
+def test_cli_codex_local(monkeypatch):
+    class FakeModel:
+        def __init__(self, *a, **kw):
+            pass
+
+        def generate_response(self, messages):
+            return "loc"
+
+    monkeypatch.setattr("hyperhelix.agents.llm.TransformersChatModel", FakeModel)
+    runner = CliRunner()
+    result = runner.invoke(commands.cli, ["codex", "hello", "--provider", "local"])
+    assert result.exit_code == 0
+    assert "loc" in result.output
