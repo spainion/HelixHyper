@@ -52,19 +52,35 @@ def issues(repo: str) -> None:
     default="openrouter",
     show_default=True,
 )
-def codex(prompt: str, provider: str) -> None:
+@click.option("--model", default=None, help="Model identifier to use")
+@click.option("--stream", is_flag=True, help="Stream output if supported")
+def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
     """Return a quick LLM response using the configured provider."""
     from ..agents import llm
 
     provider = provider.lower()
     if provider == "openai":
-        model = llm.OpenAIChatModel(api_key=os.getenv("OPENAI_API_KEY"))
+        chat = llm.OpenAIChatModel(
+            model=model or "gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY")
+        )
+        response = chat.generate_response([{"role": "user", "content": prompt}])
     elif provider == "openrouter":
-        model = llm.OpenRouterChatModel(api_key=os.getenv("OPENROUTER_API_KEY"))
+        chat = llm.OpenRouterChatModel(
+            model=model or "openai/gpt-4o",
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+        )
+        if stream:
+            response = chat.stream_response([{"role": "user", "content": prompt}])
+        else:
+            response = chat.generate_response([{"role": "user", "content": prompt}])
     elif provider == "huggingface":
-        model = llm.HuggingFaceChatModel(api_key=os.getenv("HUGGINGFACE_API_TOKEN"))
+        chat = llm.HuggingFaceChatModel(
+            model=model or "HuggingFaceH4/zephyr-7b-beta",
+            api_key=os.getenv("HUGGINGFACE_API_TOKEN"),
+        )
+        response = chat.generate_response([{"role": "user", "content": prompt}])
     else:
-        model = llm.TransformersChatModel()
+        chat = llm.TransformersChatModel(model=model or "sshleifer/tiny-gpt2")
+        response = chat.generate_response([{"role": "user", "content": prompt}])
 
-    response = model.generate_response([{"role": "user", "content": prompt}])
     click.echo(response)

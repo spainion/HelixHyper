@@ -19,3 +19,4 @@
 17. List HuggingFace models with `curl http://localhost:8000/models/huggingface?q=gpt2`.
 18. List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
 19. Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hello"`.
+20. Stream a response with `python -m hyperhelix.cli.commands codex "Hi" --stream --model openai/gpt-4o`.

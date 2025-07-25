@@ -74,3 +74,22 @@ def test_cli_codex_local(monkeypatch):
     result = runner.invoke(commands.cli, ["codex", "hello", "--provider", "local"])
     assert result.exit_code == 0
     assert "loc" in result.output
+
+
+def test_cli_codex_stream(monkeypatch):
+    class FakeModel:
+        def __init__(self, model="openai/gpt-4o", api_key=None):
+            FakeModel.used_model = model
+
+        def stream_response(self, messages):
+            return "stream"
+
+    monkeypatch.setattr("hyperhelix.agents.llm.OpenRouterChatModel", FakeModel)
+    runner = CliRunner()
+    result = runner.invoke(
+        commands.cli,
+        ["codex", "ping", "--stream", "--model", "foo-model"],
+    )
+    assert result.exit_code == 0
+    assert "stream" in result.output
+    assert FakeModel.used_model == "foo-model"

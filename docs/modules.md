@@ -27,3 +27,4 @@ Start the API from the command line with `python -m hyperhelix.cli.commands serv
 Use `python -m hyperhelix.cli.commands scan .` to index a directory.
 List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
 Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.
+Specify a model and stream output with `python -m hyperhelix.cli.commands codex "Hi" --model openai/gpt-4o --stream`.
