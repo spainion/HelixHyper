@@ -95,6 +95,7 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"ope
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'
 curl http://localhost:8000/models/openrouter
 # if the required API key is missing these calls return HTTP 503
+# network failures during suggestion requests return HTTP 502
 ```
 ```
 hyperhelix_system/

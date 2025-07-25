@@ -18,6 +18,7 @@
 - **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks, including fetching a single task.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
+- **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions (503 when keys missing, 502 on provider failure).
 - **hyperhelix/agents/llm.list_openrouter_models** – fetch available models.
 - **frontend/** – example React + Three.js client.
 - **tests/** – unit tests covering the system.

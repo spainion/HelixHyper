@@ -8,6 +8,7 @@ Follow these steps to work with the full HelixHyper system:
 3. Run `pytest -q` to ensure the codebase imports and tests pass.
 4. Use the CLI or API components to interact with the graph. The API exposes endpoints for creating nodes and edges, listing nodes and edges, executing nodes, managing tasks, walking the graph, and listing available OpenRouter models.
    The suggestion and model-listing routes return `503` if the necessary API keys are not configured.
+   Provider errors produce `502` to indicate upstream failures.
 5. Build the included `Dockerfile` to run everything in a container if desired.
 
 Supply a persistence adapter when constructing `HyperHelix` if you need to

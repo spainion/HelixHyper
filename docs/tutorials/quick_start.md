@@ -18,3 +18,4 @@
 11. Use OpenRouter with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'`.
 12. List OpenRouter models with `curl http://localhost:8000/models/openrouter`.
 13. These routes return a `503` error unless `OPENAI_API_KEY` or `OPENROUTER_API_KEY` is set in the environment.
+14. Provider failures result in a `502` status code.

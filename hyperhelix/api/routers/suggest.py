@@ -34,6 +34,9 @@ def suggest(
         {'role': 'system', 'content': graph_summary(graph)},
         {'role': 'user', 'content': prompt},
     ]
-    response = llm.generate_response(messages)
+    try:
+        response = llm.generate_response(messages)
+    except Exception as exc:  # pragma: no cover - network failures
+        raise HTTPException(status_code=502, detail=str(exc))
     return {'response': response}
 
