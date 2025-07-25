@@ -107,6 +107,8 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"ope
 # use OpenRouter
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'
 curl http://localhost:8000/models/openrouter
+# use HuggingFace
+curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"huggingface"}'
 ```
 ```
 hyperhelix_system/
@@ -229,7 +231,7 @@ The graph core validates nodes when creating edges and logs an error if a refere
 The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY` and `OPENROUTER_API_KEY` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key.
 
 ### Calling OpenAI directly
 
@@ -276,6 +278,15 @@ Alternatively, call `GET /models/openrouter` to fetch the list via the API:
 
 ```bash
 curl http://localhost:8000/models/openrouter
+```
+
+### Using the HuggingFace Inference API
+
+```python
+from hyperhelix.agents.llm import HuggingFaceChatModel
+model = HuggingFaceChatModel(api_key=os.getenv('HUGGINGFACE_API_TOKEN'))
+resp = model.generate_response([{'role': 'user', 'content': 'Hello'}])
+print(resp)
 ```
 
 ## Contribution Guidelines

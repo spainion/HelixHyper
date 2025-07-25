@@ -183,6 +183,16 @@ def test_suggest_endpoint_openrouter():
 
 
 @pytest.mark.skipif(
+    not os.getenv('HUGGINGFACE_API_TOKEN'),
+    reason='HUGGINGFACE_API_TOKEN not set; skipping live integration test',
+)
+def test_suggest_endpoint_huggingface():
+    resp = client.post('/suggest', json={'prompt': 'Hello', 'provider': 'huggingface'})
+    assert resp.status_code == 200
+    assert 'response' in resp.json()
+
+
+@pytest.mark.skipif(
     not os.getenv('OPENROUTER_API_KEY'),
     reason='OPENROUTER_API_KEY not set; skipping live integration test',
 )
@@ -197,4 +207,11 @@ def test_suggest_includes_context(capture_openai):
     assert resp.status_code == 200
     if capture_openai is not None:
         assert capture_openai['messages'][0]['role'] == 'system'
+
+
+def test_suggest_includes_context_hf(capture_huggingface):
+    resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'huggingface'})
+    assert resp.status_code == 200
+    if capture_huggingface is not None:
+        assert capture_huggingface['messages'][0]['role'] == 'system'
 

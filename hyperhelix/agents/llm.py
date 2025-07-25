@@ -107,6 +107,33 @@ class OpenRouterChatModel(BaseChatModel):
             raise
 
 
+class HuggingFaceChatModel(BaseChatModel):
+    """Use the Hugging Face Inference API for chat completions."""
+
+    def __init__(self, model: str = "HuggingFaceH4/zephyr-7b-beta", api_key: str | None = None) -> None:
+        import httpx  # imported locally for easier mocking
+
+        self.httpx = httpx
+        self.model = model
+        self.api_key = api_key
+
+    def generate_response(self, messages: Sequence[dict]) -> str:
+        prompt = "\n".join(m["content"] for m in messages)
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
+        url = f"https://api-inference.huggingface.co/models/{self.model}"
+        try:
+            resp = self.httpx.post(url, json={"inputs": prompt}, headers=headers, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            if isinstance(data, list) and data and "generated_text" in data[0]:
+                return data[0]["generated_text"]
+            if isinstance(data, dict) and "generated_text" in data:
+                return data["generated_text"]
+            raise RuntimeError("Unexpected response")
+        except Exception:  # pragma: no cover - network failures
+            logger.exception("HuggingFace request failed")
+            raise
+
 def list_openrouter_models(api_key: str | None = None) -> list[str]:
     """Return a list of available model IDs from OpenRouter."""
     import httpx

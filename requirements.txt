@@ -6,3 +6,4 @@ neo4j
 qdrant-client
 PyYAML
 openai
+huggingface_hub

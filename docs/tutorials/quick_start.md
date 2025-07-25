@@ -14,3 +14,4 @@
 12. Request code suggestions with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openai"}'` (includes a graph summary automatically).
 13. Use OpenRouter with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"openrouter"}'`.
 14. List OpenRouter models with `curl http://localhost:8000/models/openrouter`.
+15. Use HuggingFace with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"huggingface"}'`.

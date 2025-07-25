@@ -15,3 +15,15 @@ def capture_openai(monkeypatch):
         if not os.getenv("OPENAI_API_KEY"):
             monkeypatch.setenv("OPENAI_API_KEY", "test")
     yield captured
+
+
+@pytest.fixture
+def capture_huggingface(monkeypatch):
+    """Patch ``HuggingFaceChatModel.generate_response`` unless live tests requested."""
+    captured: dict | None = {} if os.getenv("USE_REAL_LLM", "").lower() not in {"1", "true", "yes"} else None
+    if captured is not None:
+        def fake_generate(self, messages):
+            captured["messages"] = messages
+            return "ok"
+        monkeypatch.setattr(suggest.HuggingFaceChatModel, "generate_response", fake_generate)
+    yield captured
