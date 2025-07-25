@@ -13,6 +13,7 @@ from .routers import (
     suggest,
     models,
     summary,
+    export,
 )
 
 app = FastAPI()
@@ -26,6 +27,7 @@ app.include_router(tasks.router)
 app.include_router(suggest.router)
 app.include_router(models.router)
 app.include_router(summary.router)
+app.include_router(export.router)
 
 
 @app.get('/')

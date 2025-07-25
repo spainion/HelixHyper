@@ -117,3 +117,30 @@ def models(provider: str, query: str, limit: int) -> None:
 
     for mid in model_list:
         click.echo(mid)
+
+
+@cli.command()
+@click.argument("output", default="-")
+def export(output: str) -> None:
+    """Export the current graph as JSON."""
+    from ..api.main import app
+    from ..visualization.threejs_renderer import node_to_json
+    import json
+    from pathlib import Path
+
+    graph = app.state.graph
+    data = {
+        "nodes": [node_to_json(n) for n in graph.nodes.values()],
+        "edges": [
+            {"a": a, "b": b, "weight": w}
+            for a, node in graph.nodes.items()
+            for b, w in node.edges.items()
+            if a < b
+        ],
+    }
+    text = json.dumps(data)
+    if output == "-":
+        click.echo(text)
+    else:
+        Path(output).write_text(text)
+        click.echo(f"Exported to {output}")

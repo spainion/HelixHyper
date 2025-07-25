@@ -22,3 +22,4 @@
 20. Stream a response with `python -m hyperhelix.cli.commands codex "Hi" --stream --model openai/gpt-4o`.
 21. List models with `python -m hyperhelix.cli.commands models --provider openrouter`.
     Provider keys such as `OPENROUTER_API_KEY` are read from the environment. Use `hyperhelix.utils.get_api_key()` to fetch them in your own scripts.
+22. Export the graph with `python -m hyperhelix.cli.commands export graph.json` and inspect the resulting file.

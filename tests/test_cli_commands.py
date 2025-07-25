@@ -1,5 +1,6 @@
 from click.testing import CliRunner
 from hyperhelix.core import HyperHelix
+import json
 
 from hyperhelix.cli import commands
 
@@ -119,3 +120,20 @@ def test_cli_models_huggingface(monkeypatch):
     )
     assert result.exit_code == 0
     assert "hf" in result.output
+
+
+def test_cli_export(monkeypatch):
+    from hyperhelix.api import main
+    from hyperhelix.core import HyperHelix
+    from hyperhelix.node import Node
+
+    main.app.state.graph = HyperHelix()
+    main.app.state.graph.add_node(Node(id="a", payload={}))
+    main.app.state.graph.add_node(Node(id="b", payload={}))
+    main.app.state.graph.add_edge("a", "b")
+    runner = CliRunner()
+    result = runner.invoke(commands.cli, ["export"])
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert any(n["id"] == "a" for n in data["nodes"])
+    assert any(e["a"] == "a" and e["b"] == "b" for e in data["edges"])

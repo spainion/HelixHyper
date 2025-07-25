@@ -47,6 +47,7 @@ python -m hyperhelix.cli.commands codex "Hello" --provider local
 python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model openai/gpt-4o --stream
 python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
+python -m hyperhelix.cli.commands export graph.json
 ```
 The command reads `OPENROUTER_API_KEY` or `HUGGINGFACE_API_TOKEN` from the environment when contacting each provider.
 
@@ -183,7 +184,8 @@ hyperhelix_system/
 │   │       ├── tasks.py         # POST /tasks
 │   │       ├── suggest.py       # POST /suggest
 │   │       ├── models.py        # GET /models/openrouter
-│   │       └── summary.py       # GET /summary
+│   │       ├── summary.py       # GET /summary
+│   │       └── export.py        # GET /export
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)
