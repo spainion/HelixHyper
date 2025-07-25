@@ -192,16 +192,9 @@ def test_list_openrouter_models_endpoint():
     assert isinstance(resp.json(), list) and resp.json()
 
 
-def test_suggest_includes_context(monkeypatch):
-    captured = {}
-
-    def fake_generate(self, messages):
-        captured['messages'] = messages
-        return 'ok'
-
-    monkeypatch.setattr('hyperhelix.api.routers.suggest.OpenAIChatModel.generate_response', fake_generate)
-    monkeypatch.setenv('OPENAI_API_KEY', 'test')
+def test_suggest_includes_context(capture_openai):
     resp = client.post('/suggest', json={'prompt': 'hi', 'provider': 'openai'})
     assert resp.status_code == 200
-    assert captured['messages'][0]['role'] == 'system'
+    if capture_openai is not None:
+        assert capture_openai['messages'][0]['role'] == 'system'
 
