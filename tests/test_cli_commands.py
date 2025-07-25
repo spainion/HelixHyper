@@ -93,3 +93,28 @@ def test_cli_codex_stream(monkeypatch):
     assert result.exit_code == 0
     assert "stream" in result.output
     assert FakeModel.used_model == "foo-model"
+
+
+def test_cli_models_openrouter(monkeypatch):
+    monkeypatch.setattr(
+        "hyperhelix.agents.llm.list_openrouter_models",
+        lambda api_key=None: ["a", "b"],
+    )
+    runner = CliRunner()
+    result = runner.invoke(commands.cli, ["models", "--provider", "openrouter"]) 
+    assert result.exit_code == 0
+    assert "a" in result.output
+
+
+def test_cli_models_huggingface(monkeypatch):
+    monkeypatch.setattr(
+        "hyperhelix.agents.llm.list_huggingface_models",
+        lambda search="gpt2", limit=5: ["hf"],
+    )
+    runner = CliRunner()
+    result = runner.invoke(
+        commands.cli,
+        ["models", "--provider", "huggingface", "--query", "gpt2", "--limit", "1"],
+    )
+    assert result.exit_code == 0
+    assert "hf" in result.output

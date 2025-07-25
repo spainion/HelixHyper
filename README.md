@@ -45,6 +45,8 @@ Quickly get an LLM response using:
 python -m hyperhelix.cli.commands codex "Hello" --provider openrouter
 python -m hyperhelix.cli.commands codex "Hello" --provider local
 python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model openai/gpt-4o --stream
+python -m hyperhelix.cli.commands models --provider openrouter
+python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 ```
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing

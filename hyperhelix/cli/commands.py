@@ -84,3 +84,27 @@ def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
         response = chat.generate_response([{"role": "user", "content": prompt}])
 
     click.echo(response)
+
+
+@cli.command()
+@click.option(
+    "--provider",
+    type=click.Choice(["openrouter", "huggingface"], case_sensitive=False),
+    default="openrouter",
+    show_default=True,
+)
+@click.option("--query", "-q", default="gpt2", show_default=True, help="Search term for HuggingFace")
+@click.option("--limit", "-n", default=5, show_default=True, help="Number of HuggingFace models")
+def models(provider: str, query: str, limit: int) -> None:
+    """List available model identifiers."""
+    from ..agents import llm
+
+    provider = provider.lower()
+    if provider == "openrouter":
+        model_list = llm.list_openrouter_models(
+            api_key=os.getenv("OPENROUTER_API_KEY")
+        )
+    else:
+        model_list = llm.list_huggingface_models(search=query, limit=limit)
+    for mid in model_list:
+        click.echo(mid)
