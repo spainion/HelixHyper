@@ -28,3 +28,4 @@ Use `python -m hyperhelix.cli.commands scan .` to index a directory.
 List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
 Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.
 Specify a model and stream output with `python -m hyperhelix.cli.commands codex "Hi" --model openai/gpt-4o --stream`.
+Delete an edge with `curl -X DELETE http://localhost:8000/edges/a/b` or call `graph.remove_edge('a', 'b')` directly when using `HyperHelix`.
