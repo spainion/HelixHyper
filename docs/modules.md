@@ -4,7 +4,7 @@
 - **hyperhelix/** – core engine and subpackages for analytics, evolution, execution and more.
 - **hyperhelix/api/** – FastAPI server exposing REST routes.
 - **hyperhelix/cli/** – command-line interface helpers.
-- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `remove_node`, `spiral_walk` and `shortest_path`.
+- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `remove_edge`, `remove_node`, `spiral_walk` and `shortest_path`.
 - **persistence adapters** – implement `save_node`, `load_node`, `save_edge` and
   `load_edges` for automatic storage when supplied to `HyperHelix`.
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
