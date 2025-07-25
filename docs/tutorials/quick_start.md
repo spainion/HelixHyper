@@ -21,4 +21,4 @@
 19. Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hello"`.
 20. Stream a response with `python -m hyperhelix.cli.commands codex "Hi" --stream --model openai/gpt-4o`.
 21. List models with `python -m hyperhelix.cli.commands models --provider openrouter`.
-    The command requires `OPENROUTER_API_KEY` to be set.
+    Provider keys such as `OPENROUTER_API_KEY` are read from the environment.

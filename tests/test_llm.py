@@ -3,6 +3,7 @@ import os
 from hyperhelix.agents.llm import (
     OpenAIChatModel,
     OpenRouterChatModel,
+    HuggingFaceChatModel,
     list_openrouter_models,
 )
 
@@ -47,4 +48,16 @@ def test_openrouter_stream_live():
 def test_list_models_live():
     models = list_openrouter_models(api_key=os.getenv('OPENROUTER_API_KEY'))
     assert isinstance(models, list) and models
+
+
+def test_openrouter_defaults_to_env(monkeypatch):
+    monkeypatch.setenv('OPENROUTER_API_KEY', 'xyz')
+    model = OpenRouterChatModel()
+    assert model.api_key == 'xyz'
+
+
+def test_huggingface_defaults_to_env(monkeypatch):
+    monkeypatch.setenv('HUGGINGFACE_API_TOKEN', 'abc')
+    model = HuggingFaceChatModel()
+    assert model.api_key == 'abc'
 

@@ -48,7 +48,7 @@ python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model opena
 python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 ```
-Listing models from OpenRouter requires the `OPENROUTER_API_KEY` environment variable.
+The command reads `OPENROUTER_API_KEY` or `HUGGINGFACE_API_TOKEN` from the environment when contacting each provider.
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
@@ -294,6 +294,7 @@ from hyperhelix.agents.llm import list_openrouter_models
 models = list_openrouter_models()
 print(models)
 ```
+The helper reads `OPENROUTER_API_KEY` from the environment when available.
 Alternatively, call `GET /models/openrouter` to fetch the list via the API:
 
 ```bash
@@ -304,10 +305,11 @@ curl http://localhost:8000/models/openrouter
 
 ```python
 from hyperhelix.agents.llm import HuggingFaceChatModel
-model = HuggingFaceChatModel(api_key=os.getenv('HUGGINGFACE_API_TOKEN'))
+model = HuggingFaceChatModel()
 resp = model.generate_response([{'role': 'user', 'content': 'Hello'}])
 print(resp)
 ```
+The model reads `HUGGINGFACE_API_TOKEN` from the environment when present.
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.
