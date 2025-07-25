@@ -56,6 +56,18 @@ class HyperHelix:
         if self.adapter:
             self.adapter.save_edge(a, b, weight)
 
+    def remove_edge(self, a: str, b: str) -> None:
+        """Remove an edge between two nodes."""
+        logger.debug("Removing edge %s <-> %s", a, b)
+        if a not in self.nodes or b not in self.nodes:
+            missing = a if a not in self.nodes else b
+            logger.error("Edge removal failed missing node %s", missing)
+            raise KeyError(missing)
+        self.nodes[a].edges.pop(b, None)
+        self.nodes[b].edges.pop(a, None)
+        if self.adapter and hasattr(self.adapter, "remove_edge"):
+            self.adapter.remove_edge(a, b)
+
     def remove_node(self, node_id: str) -> None:
         """Remove a node and any edges referencing it."""
         logger.debug("Removing node %s", node_id)

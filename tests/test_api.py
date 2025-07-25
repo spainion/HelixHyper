@@ -100,6 +100,16 @@ def test_list_edges():
     assert edges == {('a', 'b', 2.0)}
 
 
+def test_delete_edge():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b'})
+    resp = client.delete('/edges/a/b')
+    assert resp.status_code == 200
+    assert resp.json()['status'] == 'deleted'
+    assert 'b' not in app.state.graph.nodes['a'].edges
+
+
 def test_summary_endpoint():
     client.post('/nodes', json={'id': 'a', 'payload': {}})
     resp = client.get('/summary')
