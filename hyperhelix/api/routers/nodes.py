@@ -34,6 +34,16 @@ def get_node(node_id: str, graph: HyperHelix = Depends(get_graph)) -> NodeOut:
     return NodeOut(id=node.id, payload=node.payload)
 
 
+@router.delete('/nodes/{node_id}')
+def delete_node(node_id: str, graph: HyperHelix = Depends(get_graph)) -> dict[str, str]:
+    """Remove a node from the graph."""
+    if node_id not in graph.nodes:
+        logger.error("Node %s not found", node_id)
+        raise HTTPException(status_code=404, detail='Not found')
+    graph.remove_node(node_id)
+    return {"status": "deleted"}
+
+
 @router.get('/nodes', response_model=List[NodeOut])
 def list_nodes(graph: HyperHelix = Depends(get_graph)) -> list[NodeOut]:
     """Return all nodes in the graph sorted by identifier."""

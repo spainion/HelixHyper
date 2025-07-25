@@ -73,6 +73,14 @@ def test_get_missing_node():
     assert resp.status_code == 404
 
 
+def test_delete_node():
+    client.post('/nodes', json={'id': 'z', 'payload': {}})
+    resp = client.delete('/nodes/z')
+    assert resp.status_code == 200
+    assert resp.json()['status'] == 'deleted'
+    assert 'z' not in app.state.graph.nodes
+
+
 def test_list_nodes():
     client.post('/nodes', json={'id': 'a', 'payload': {}})
     client.post('/nodes', json={'id': 'b', 'payload': {}})

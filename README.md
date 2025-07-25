@@ -69,6 +69,11 @@ curl http://localhost:8000/nodes
 
 curl http://localhost:8000/edges
 
+# delete a node
+curl -X DELETE http://localhost:8000/nodes/a
+# {"status": "deleted"}
+All edges referencing the node will be dropped.
+
 curl http://localhost:8000/walk/a?depth=1
 
 # get a graph summary
@@ -139,7 +144,7 @@ hyperhelix_system/
 │   │   ├── dependencies.py      # JWT/OAuth2 stubs
 │   │   ├── schemas.py           # Pydantic models (NodeIn, NodeOut, EdgeIn…)
 │   │   └── routers/
-│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, POST /nodes/{id}/execute
+│   │       ├── nodes.py         # POST /nodes, GET /nodes/{id}, GET /nodes, DELETE /nodes/{id}, POST /nodes/{id}/execute
 │   │       ├── edges.py         # POST /edges, GET /edges
 │   │       ├── walk.py          # GET /walk/{start_id}
 │   │       ├── bloom.py         # POST /autobloom/{node_id}

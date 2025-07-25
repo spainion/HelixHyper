@@ -4,7 +4,7 @@
 - **hyperhelix/** – core engine and subpackages for analytics, evolution, execution and more.
 - **hyperhelix/api/** – FastAPI server exposing REST routes.
 - **hyperhelix/cli/** – command-line interface helpers.
-- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `spiral_walk` and `shortest_path`.
+- **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `remove_node`, `spiral_walk` and `shortest_path`.
 - **persistence adapters** – implement `save_node`, `load_node`, `save_edge` and
   `load_edges` for automatic storage when supplied to `HyperHelix`.
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
@@ -12,7 +12,7 @@
 - **hyperhelix/agents/llm.py** – wrappers for OpenAI and OpenRouter chat models.
 - **hyperhelix/agents/context.py** – build system prompts from the graph.
 - **hyperhelix/api/routers/scan.py** – endpoint to index directories via `/scan`.
-- **hyperhelix/api/routers/nodes.py** – create, retrieve, list and execute nodes.
+- **hyperhelix/api/routers/nodes.py** – create, retrieve, list, delete and execute nodes.
 - **hyperhelix/api/routers/edges.py** – create and list edges.
 - **hyperhelix/api/routers/models.py** – list available OpenRouter models.
 - **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
