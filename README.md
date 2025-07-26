@@ -58,6 +58,7 @@ from hyperhelix.core import HyperHelix
 from hyperhelix.agents.openai_agent import (
     create_graph_agent,
     run_graph_agent,
+    run_graph_agent_async,
     create_session,
 )
 
@@ -66,6 +67,10 @@ agent = create_graph_agent(g)
 session = create_session()
 response = run_graph_agent(agent, "Summarize the graph", session=session)
 print(response)
+
+# Or run asynchronously
+import asyncio
+asyncio.run(run_graph_agent_async(agent, "Summarize the graph", session=session))
 
 # Agents can also modify the graph:
 run_graph_agent(agent, "add_node id=test payload='demo'")

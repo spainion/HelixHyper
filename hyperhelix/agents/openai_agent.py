@@ -56,6 +56,14 @@ def run_graph_agent(agent: Agent, prompt: str, *, session: Session | None = None
     return result.final_output
 
 
+async def run_graph_agent_async(
+    agent: Agent, prompt: str, *, session: Session | None = None
+) -> str:
+    """Asynchronously send ``prompt`` to ``agent`` and return its final output."""
+    result = await Runner.run(agent, prompt, session=session)
+    return result.final_output
+
+
 def create_session(session_id: str = "graph") -> Session:
     """Return a SQLite-backed session for conversation history."""
     return SQLiteSession(session_id)

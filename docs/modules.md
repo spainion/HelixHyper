@@ -29,7 +29,8 @@
   OpenAI Agents SDK. Tools include graph summary, listing nodes,
   inserting nodes, connecting them with edges and generating follow-up
   tasks via `autosuggest`. Agents can maintain sessions for ongoing
-  conversations.
+  conversations. Both synchronous and asynchronous helpers are provided
+  (`run_graph_agent` and `run_graph_agent_async`).
 - **frontend/** – example React + Three.js client.
 - **tests/** – unit tests covering the system.
 
