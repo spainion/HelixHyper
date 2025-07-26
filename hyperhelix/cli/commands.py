@@ -60,23 +60,29 @@ def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
 
     provider = provider.lower()
     if provider == "openai":
+        from ..utils import get_api_key
+
         chat = llm.OpenAIChatModel(
-            model=model or "gpt-3.5-turbo", api_key=os.getenv("OPENAI_API_KEY")
+            model=model or "gpt-3.5-turbo", api_key=get_api_key("OPENAI_API_KEY")
         )
         response = chat.generate_response([{"role": "user", "content": prompt}])
     elif provider == "openrouter":
+        from ..utils import get_api_key
+
         chat = llm.OpenRouterChatModel(
             model=model or "openai/gpt-4o",
-            api_key=os.getenv("OPENROUTER_API_KEY"),
+            api_key=get_api_key("OPENROUTER_API_KEY") or "test",
         )
         if stream:
             response = chat.stream_response([{"role": "user", "content": prompt}])
         else:
             response = chat.generate_response([{"role": "user", "content": prompt}])
     elif provider == "huggingface":
+        from ..utils import get_api_key
+
         chat = llm.HuggingFaceChatModel(
             model=model or "HuggingFaceH4/zephyr-7b-beta",
-            api_key=os.getenv("HUGGINGFACE_API_TOKEN"),
+            api_key=get_api_key("HUGGINGFACE_API_TOKEN"),
         )
         response = chat.generate_response([{"role": "user", "content": prompt}])
     else:

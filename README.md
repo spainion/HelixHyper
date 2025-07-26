@@ -49,7 +49,9 @@ python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 python -m hyperhelix.cli.commands export graph.json
 ```
-The command reads `OPENROUTER_API_KEY` or `HUGGINGFACE_API_TOKEN` from the environment when contacting each provider.
+Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
+`HUGGINGFACE_API_TOKEN` from the environment using
+`hyperhelix.utils.get_api_key()`.
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
