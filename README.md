@@ -137,6 +137,16 @@ curl -X POST http://localhost:8000/chat -d '{"prompt":"Hello"}'
 # includes a graph summary automatically
 # have the server generate follow-up tasks for a node
 curl -X POST http://localhost:8000/autosuggest -d '{"node_id":"my-node"}'
+# or do the same in code
+python - <<'PY'
+from hyperhelix.core import HyperHelix
+from hyperhelix.execution import enable_auto_suggest
+from hyperhelix.node import Node
+
+g = HyperHelix()
+enable_auto_suggest(g)
+g.add_node(Node(id="x", payload="print('hi')"))
+PY
 ```
 ```
 hyperhelix_system/
