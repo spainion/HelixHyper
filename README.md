@@ -224,6 +224,7 @@ hyperhelix_system/
 │   ├── test_persistence.py
 │   ├── test_api.py
 │   └── test_cli.py
+├── ultimate_zamida_fs_interpreter/        # lightweight graph & CLI helpers
 └── docs/                        # full documentation & tutorials
     ├── architecture.md          # high-level system overview
     ├── modules.md               # deep dive per module

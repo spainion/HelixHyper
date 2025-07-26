@@ -24,6 +24,7 @@
  - **hyperhelix/agents/llm.list_huggingface_models** – fetch HuggingFace models.
 - **frontend/** – example React + Three.js client.
 - **tests/** – unit tests covering the system.
+- **ultimate_zamida_fs_interpreter/** – standalone interpreter and in-memory graph used by some helpers.
 
 Start the API from the command line with `python -m hyperhelix.cli.commands serve`.
 Use `python -m hyperhelix.cli.commands scan .` to index a directory.
