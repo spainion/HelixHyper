@@ -135,6 +135,8 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"loc
 curl http://localhost:8000/models/huggingface?q=gpt2
 curl -X POST http://localhost:8000/chat -d '{"prompt":"Hello"}'
 # includes a graph summary automatically
+# have the server generate follow-up tasks for a node
+curl -X POST http://localhost:8000/autosuggest -d '{"node_id":"my-node"}'
 ```
 ```
 hyperhelix_system/
