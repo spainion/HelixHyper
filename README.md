@@ -132,6 +132,7 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"hug
 # use a local Transformers model
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"local"}'
 curl http://localhost:8000/models/huggingface?q=gpt2
+curl -X POST http://localhost:8000/chat -d '{"prompt":"Hello"}'
 ```
 ```
 hyperhelix_system/
@@ -187,7 +188,8 @@ hyperhelix_system/
 │   │       ├── suggest.py       # POST /suggest
 │   │       ├── models.py        # GET /models/openrouter
 │   │       ├── summary.py       # GET /summary
-│   │       └── export.py        # GET /export
+│   │       ├── export.py        # GET /export
+│   │       └── chat.py          # POST /chat
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)

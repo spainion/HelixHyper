@@ -17,6 +17,7 @@
 - **hyperhelix/api/routers/models.py** – list available OpenRouter or HuggingFace models.
 - **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
 - **hyperhelix/api/routers/export.py** – dump the entire graph with `/export`.
+- **hyperhelix/api/routers/chat.py** – return raw LLM completions via `/chat`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
  - **hyperhelix/agents/llm.list_openrouter_models** – fetch OpenRouter models.

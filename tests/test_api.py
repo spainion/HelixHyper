@@ -161,6 +161,16 @@ def test_export_endpoint():
     assert any(e['a'] == 'a' and e['b'] == 'b' for e in data['edges'])
 
 
+def test_chat_endpoint(monkeypatch):
+    monkeypatch.setattr(
+        'hyperhelix.api.routers.chat.OpenAIChatModel.generate_response',
+        lambda self, msgs: 'ok',
+    )
+    resp = client.post('/chat', json={'prompt': 'hi', 'provider': 'openai'})
+    assert resp.status_code == 200
+    assert resp.json() == {'response': 'ok'}
+
+
 def test_task_endpoints():
     resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
     assert resp.status_code == 200
