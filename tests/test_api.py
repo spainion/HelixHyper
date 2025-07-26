@@ -261,3 +261,15 @@ def test_suggest_includes_context_local(capture_local):
     if capture_local is not None:
         assert capture_local['messages'][0]['role'] == 'system'
 
+
+@pytest.mark.skipif(
+    not os.getenv('OPENAI_API_KEY'),
+    reason='OPENAI_API_KEY not set; skipping live integration test',
+)
+def test_autosuggest_endpoint():
+    client.post('/nodes', json={'id': 'auto', 'payload': {}})
+    resp = client.post('/autosuggest', json={'node_id': 'auto'})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, list)
+

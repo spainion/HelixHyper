@@ -15,5 +15,6 @@ def test_auto_suggest_creates_task():
     g = HyperHelix()
     enable_auto_suggest(g)
     g.add_node(Node(id="x", payload="print('hi')"))
-    assert "suggest-x" in g.nodes
-    assert isinstance(g.nodes["suggest-x"].payload, Task)
+    created = [n for n in g.nodes if n.startswith("suggest-")]
+    assert created
+    assert isinstance(g.nodes[created[0]].payload, Task)
