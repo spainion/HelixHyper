@@ -20,6 +20,7 @@
 - **hyperhelix/api/routers/chat.py** – return LLM completions with a graph summary via `/chat`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
+- **hyperhelix/execution/suggestion.py** – create tasks from LLM analysis when nodes are inserted.
  - **hyperhelix/agents/llm.list_openrouter_models** – fetch OpenRouter models.
  - **hyperhelix/agents/llm.list_huggingface_models** – fetch HuggingFace models.
 - **frontend/** – example React + Three.js client.
