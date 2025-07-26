@@ -43,6 +43,9 @@ def auto_suggest(
 ) -> List[Task]:
     """Create follow-up tasks from an LLM suggestion."""
 
+    if node_id.startswith("suggest-"):
+        return []
+
     node = graph.nodes[node_id]
     messages = [
         {"role": "system", "content": graph_summary(graph)},
@@ -81,6 +84,8 @@ def enable_auto_suggest(
     """Bind automatic suggestions to node insertion."""
 
     def _task(g: HyperHelix, node_id: str, _: Node | None) -> None:
+        if node_id.startswith("suggest-"):
+            return
         auto_suggest(g, node_id, provider=provider, model=model)
 
     bind_recursion_with_node(graph, _task)
