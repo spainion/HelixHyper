@@ -55,16 +55,23 @@ Create a graph-aware OpenAI agent using the Agents SDK:
 
 ```python
 from hyperhelix.core import HyperHelix
-from hyperhelix.agents.openai_agent import create_graph_agent, run_graph_agent
+from hyperhelix.agents.openai_agent import (
+    create_graph_agent,
+    run_graph_agent,
+    create_session,
+)
 
 g = HyperHelix()
 agent = create_graph_agent(g)
-response = run_graph_agent(agent, "Summarize the graph")
+session = create_session()
+response = run_graph_agent(agent, "Summarize the graph", session=session)
 print(response)
 
 # Agents can also modify the graph:
 run_graph_agent(agent, "add_node id=test payload='demo'")
-run_graph_agent(agent, "connect_nodes a=test b=other")
+run_graph_agent(agent, "connect_nodes a=test b=other", session=session)
+# have the agent generate follow-up tasks
+run_graph_agent(agent, "autosuggest node_id=test", session=session)
 ```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
