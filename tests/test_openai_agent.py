@@ -14,3 +14,10 @@ def test_graph_agent_runs():
     agent = create_graph_agent(g)
     out = run_graph_agent(agent, "Hello")
     assert isinstance(out, str)
+
+
+def test_graph_agent_tools():
+    g = HyperHelix()
+    agent = create_graph_agent(g)
+    tool_names = {t.name for t in agent.tools}
+    assert {"summary", "list_nodes", "add_node", "connect_nodes"} <= tool_names

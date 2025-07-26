@@ -61,6 +61,10 @@ g = HyperHelix()
 agent = create_graph_agent(g)
 response = run_graph_agent(agent, "Summarize the graph")
 print(response)
+
+# Agents can also modify the graph:
+run_graph_agent(agent, "add_node id=test payload='demo'")
+run_graph_agent(agent, "connect_nodes a=test b=other")
 ```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
