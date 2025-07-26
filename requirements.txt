@@ -9,3 +9,4 @@ openai
 huggingface_hub
 httpx
 transformers
+openai-agents

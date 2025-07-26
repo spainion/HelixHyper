@@ -50,6 +50,18 @@ python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 python -m hyperhelix.cli.commands export graph.json
 ```
+
+Create a graph-aware OpenAI agent using the Agents SDK:
+
+```python
+from hyperhelix.core import HyperHelix
+from hyperhelix.agents.openai_agent import create_graph_agent, run_graph_agent
+
+g = HyperHelix()
+agent = create_graph_agent(g)
+response = run_graph_agent(agent, "Summarize the graph")
+print(response)
+```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
 `hyperhelix.utils.get_api_key()`.

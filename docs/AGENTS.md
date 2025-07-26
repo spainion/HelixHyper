@@ -8,7 +8,7 @@ Follow these steps to work with the full HelixHyper system:
 3. Run `pytest -q` to ensure the codebase imports and tests pass.
    Set `USE_REAL_LLM=1` to disable test patches or use `scripts/test_with_llm.sh`.
 4. Use the CLI or API components to interact with the graph. The API exposes endpoints for creating nodes and edges, listing nodes and edges (globally or per node), deleting nodes and edges, executing nodes, walking the graph, and listing available OpenRouter models. HuggingFace completions are also supported via the `/suggest` endpoint.
-   Additional CLI helpers let you fetch GitHub issues (`issues`) and send quick LLM prompts (`codex`).
+   Additional CLI helpers let you fetch GitHub issues (`issues`) and send quick LLM prompts (`codex`). Graph-aware agents can be created with the OpenAI Agents SDK in `hyperhelix.agents.openai_agent`.
 5. Build the included `Dockerfile` to run everything in a container if desired.
 
 Supply a persistence adapter when constructing `HyperHelix` if you need to
