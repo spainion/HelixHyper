@@ -17,6 +17,13 @@
 15. Use HuggingFace with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"huggingface"}'`.
 16. Use a local model with `curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"local"}'`.
 17. List HuggingFace models with `curl http://localhost:8000/models/huggingface?q=gpt2`.
-18. List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
-19. Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hello"`.
-20. Stream a response with `python -m hyperhelix.cli.commands codex "Hi" --stream --model openai/gpt-4o`.
+18. Send a chat request with `curl -X POST http://localhost:8000/chat -d '{"prompt":"Hi"}'`.
+    The server adds a short graph summary to the prompt automatically.
+19. List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
+20. Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hello"`.
+21. Stream a response with `python -m hyperhelix.cli.commands codex "Hi" --stream --model openai/gpt-4o`.
+22. List models with `python -m hyperhelix.cli.commands models --provider openrouter`.
+    Commands read provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
+    `HUGGINGFACE_API_TOKEN` from the environment via
+    `hyperhelix.utils.get_api_key()`.
+23. Export the graph with `python -m hyperhelix.cli.commands export graph.json` and inspect the resulting file.

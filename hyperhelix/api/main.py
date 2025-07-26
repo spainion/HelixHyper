@@ -11,8 +11,10 @@ from .routers import (
     scan,
     tasks,
     suggest,
+    chat,
     models,
     summary,
+    export,
 )
 
 app = FastAPI()
@@ -24,8 +26,10 @@ app.include_router(bloom.router)
 app.include_router(scan.router)
 app.include_router(tasks.router)
 app.include_router(suggest.router)
+app.include_router(chat.router)
 app.include_router(models.router)
 app.include_router(summary.router)
+app.include_router(export.router)
 
 
 @app.get('/')

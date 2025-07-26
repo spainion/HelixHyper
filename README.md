@@ -45,7 +45,14 @@ Quickly get an LLM response using:
 python -m hyperhelix.cli.commands codex "Hello" --provider openrouter
 python -m hyperhelix.cli.commands codex "Hello" --provider local
 python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model openai/gpt-4o --stream
+# the codex command also sends a graph summary as context
+python -m hyperhelix.cli.commands models --provider openrouter
+python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
+python -m hyperhelix.cli.commands export graph.json
 ```
+Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
+`HUGGINGFACE_API_TOKEN` from the environment using
+`hyperhelix.utils.get_api_key()`.
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
@@ -126,6 +133,8 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"hug
 # use a local Transformers model
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"local"}'
 curl http://localhost:8000/models/huggingface?q=gpt2
+curl -X POST http://localhost:8000/chat -d '{"prompt":"Hello"}'
+# includes a graph summary automatically
 ```
 ```
 hyperhelix_system/
@@ -180,7 +189,9 @@ hyperhelix_system/
 │   │       ├── tasks.py         # POST /tasks
 │   │       ├── suggest.py       # POST /suggest
 │   │       ├── models.py        # GET /models/openrouter
-│   │       └── summary.py       # GET /summary
+│   │       ├── summary.py       # GET /summary
+│   │       ├── export.py        # GET /export
+│   │       └── chat.py          # POST /chat
 │   ├── cli/                     # command-line interface
 │   │   ├── __init__.py
 │   │   └── commands.py          # click-based commands (init, load, dump, serve)
@@ -248,7 +259,7 @@ The graph core validates nodes when creating edges and logs an error if a refere
 The engine also provides event hooks. `evented_engine.on_insert` is registered automatically and recalculates importance and permanence whenever a node is added. You can register custom callbacks with `register_insert_hook` or `register_update_hook` to persist data or trigger other tasks.
 
 ## LLM Integration
-Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key.
+Use the helpers in `hyperhelix.agents.llm` to connect to popular language models such as OpenAI. Chat messages can be processed with `handle_chat_message`, which stores the conversation in the graph and records any model replies. Set provider keys like `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` in the environment so integrations work correctly. When `OPENAI_API_KEY` isn’t present a fallback value of ``"test"`` is used so development can proceed without a real key. The convenience function `hyperhelix.utils.get_api_key("OPENROUTER_API_KEY")` retrieves keys with a warning if they are missing.
 
 ### Calling OpenAI directly
 
@@ -291,6 +302,7 @@ from hyperhelix.agents.llm import list_openrouter_models
 models = list_openrouter_models()
 print(models)
 ```
+The helper reads `OPENROUTER_API_KEY` from the environment when available.
 Alternatively, call `GET /models/openrouter` to fetch the list via the API:
 
 ```bash
@@ -301,10 +313,11 @@ curl http://localhost:8000/models/openrouter
 
 ```python
 from hyperhelix.agents.llm import HuggingFaceChatModel
-model = HuggingFaceChatModel(api_key=os.getenv('HUGGINGFACE_API_TOKEN'))
+model = HuggingFaceChatModel()
 resp = model.generate_response([{'role': 'user', 'content': 'Hello'}])
 print(resp)
 ```
+The model reads `HUGGINGFACE_API_TOKEN` from the environment when present.
 
 ## Contribution Guidelines
 - Follow the structure above when adding modules.

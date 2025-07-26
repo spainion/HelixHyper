@@ -149,6 +149,35 @@ def test_execute_node_endpoint():
     assert data['id'] == 'x'
 
 
+def test_export_endpoint():
+    client.post('/nodes', json={'id': 'a', 'payload': {}})
+    client.post('/nodes', json={'id': 'b', 'payload': {}})
+    client.post('/edges', json={'a': 'a', 'b': 'b'})
+    resp = client.get('/export')
+    assert resp.status_code == 200
+    data = resp.json()
+    ids = {n['id'] for n in data['nodes']}
+    assert {'a', 'b'} <= ids
+    assert any(e['a'] == 'a' and e['b'] == 'b' for e in data['edges'])
+
+
+def test_chat_endpoint(monkeypatch):
+    captured = {}
+
+    def fake_generate(self, msgs):
+        captured['messages'] = msgs
+        return 'ok'
+
+    monkeypatch.setattr(
+        'hyperhelix.api.routers.chat.OpenAIChatModel.generate_response',
+        fake_generate,
+    )
+    resp = client.post('/chat', json={'prompt': 'hi', 'provider': 'openai'})
+    assert resp.status_code == 200
+    assert resp.json() == {'response': 'ok'}
+    assert captured['messages'][0]['role'] == 'system'
+
+
 def test_task_endpoints():
     resp = client.post('/tasks', json={'id': 't1', 'description': 'demo'})
     assert resp.status_code == 200

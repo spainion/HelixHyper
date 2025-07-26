@@ -1,5 +1,6 @@
 from click.testing import CliRunner
 from hyperhelix.core import HyperHelix
+import json
 
 from hyperhelix.cli import commands
 
@@ -48,10 +49,13 @@ def test_cli_issues(monkeypatch):
 
 def test_cli_codex(monkeypatch):
     class FakeModel:
+        captured = None
+
         def __init__(self, *a, **kw):
             pass
 
         def generate_response(self, messages):
+            FakeModel.captured = messages
             return "pong"
 
     monkeypatch.setattr("hyperhelix.agents.llm.OpenRouterChatModel", FakeModel)
@@ -59,14 +63,18 @@ def test_cli_codex(monkeypatch):
     result = runner.invoke(commands.cli, ["codex", "ping"])
     assert result.exit_code == 0
     assert "pong" in result.output
+    assert FakeModel.captured[0]["role"] == "system"
 
 
 def test_cli_codex_local(monkeypatch):
     class FakeModel:
+        captured = None
+
         def __init__(self, *a, **kw):
             pass
 
         def generate_response(self, messages):
+            FakeModel.captured = messages
             return "loc"
 
     monkeypatch.setattr("hyperhelix.agents.llm.TransformersChatModel", FakeModel)
@@ -74,14 +82,18 @@ def test_cli_codex_local(monkeypatch):
     result = runner.invoke(commands.cli, ["codex", "hello", "--provider", "local"])
     assert result.exit_code == 0
     assert "loc" in result.output
+    assert FakeModel.captured[0]["role"] == "system"
 
 
 def test_cli_codex_stream(monkeypatch):
     class FakeModel:
+        captured = None
+
         def __init__(self, model="openai/gpt-4o", api_key=None):
             FakeModel.used_model = model
 
         def stream_response(self, messages):
+            FakeModel.captured = messages
             return "stream"
 
     monkeypatch.setattr("hyperhelix.agents.llm.OpenRouterChatModel", FakeModel)
@@ -93,3 +105,47 @@ def test_cli_codex_stream(monkeypatch):
     assert result.exit_code == 0
     assert "stream" in result.output
     assert FakeModel.used_model == "foo-model"
+    assert FakeModel.captured[0]["role"] == "system"
+
+
+def test_cli_models_openrouter(monkeypatch):
+    monkeypatch.setattr(
+        "hyperhelix.agents.llm.list_openrouter_models",
+        lambda api_key=None: ["a", "b"],
+    )
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test")
+    runner = CliRunner()
+    result = runner.invoke(commands.cli, ["models", "--provider", "openrouter"])
+    assert result.exit_code == 0
+    assert "a" in result.output
+
+
+def test_cli_models_huggingface(monkeypatch):
+    monkeypatch.setattr(
+        "hyperhelix.agents.llm.list_huggingface_models",
+        lambda search="gpt2", limit=5: ["hf"],
+    )
+    runner = CliRunner()
+    result = runner.invoke(
+        commands.cli,
+        ["models", "--provider", "huggingface", "--query", "gpt2", "--limit", "1"],
+    )
+    assert result.exit_code == 0
+    assert "hf" in result.output
+
+
+def test_cli_export(monkeypatch):
+    from hyperhelix.api import main
+    from hyperhelix.core import HyperHelix
+    from hyperhelix.node import Node
+
+    main.app.state.graph = HyperHelix()
+    main.app.state.graph.add_node(Node(id="a", payload={}))
+    main.app.state.graph.add_node(Node(id="b", payload={}))
+    main.app.state.graph.add_edge("a", "b")
+    runner = CliRunner()
+    result = runner.invoke(commands.cli, ["export"])
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert any(n["id"] == "a" for n in data["nodes"])
+    assert any(e["a"] == "a" and e["b"] == "b" for e in data["edges"])
