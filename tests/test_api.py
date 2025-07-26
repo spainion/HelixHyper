@@ -162,13 +162,20 @@ def test_export_endpoint():
 
 
 def test_chat_endpoint(monkeypatch):
+    captured = {}
+
+    def fake_generate(self, msgs):
+        captured['messages'] = msgs
+        return 'ok'
+
     monkeypatch.setattr(
         'hyperhelix.api.routers.chat.OpenAIChatModel.generate_response',
-        lambda self, msgs: 'ok',
+        fake_generate,
     )
     resp = client.post('/chat', json={'prompt': 'hi', 'provider': 'openai'})
     assert resp.status_code == 200
     assert resp.json() == {'response': 'ok'}
+    assert captured['messages'][0]['role'] == 'system'
 
 
 def test_task_endpoints():

@@ -17,7 +17,7 @@
 - **hyperhelix/api/routers/models.py** – list available OpenRouter or HuggingFace models.
 - **hyperhelix/api/routers/summary.py** – return a graph summary via `/summary`.
 - **hyperhelix/api/routers/export.py** – dump the entire graph with `/export`.
-- **hyperhelix/api/routers/chat.py** – return raw LLM completions via `/chat`.
+- **hyperhelix/api/routers/chat.py** – return LLM completions with a graph summary via `/chat`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
  - **hyperhelix/agents/llm.list_openrouter_models** – fetch OpenRouter models.
@@ -30,6 +30,7 @@ Use `python -m hyperhelix.cli.commands scan .` to index a directory.
 List GitHub issues with `python -m hyperhelix.cli.commands issues owner/repo`.
 Get an LLM reply using `python -m hyperhelix.cli.commands codex "Hi"`.
 Specify a model and stream output with `python -m hyperhelix.cli.commands codex "Hi" --model openai/gpt-4o --stream`.
+The `codex` command automatically includes a graph summary in the prompt.
 List models with `python -m hyperhelix.cli.commands models --provider openrouter`.
 Commands read API keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and `HUGGINGFACE_API_TOKEN` from the environment. Use `hyperhelix.utils.get_api_key()` when accessing keys in your own scripts.
 Export the current graph with `python -m hyperhelix.cli.commands export graph.json`.

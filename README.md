@@ -45,6 +45,7 @@ Quickly get an LLM response using:
 python -m hyperhelix.cli.commands codex "Hello" --provider openrouter
 python -m hyperhelix.cli.commands codex "Hello" --provider local
 python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model openai/gpt-4o --stream
+# the codex command also sends a graph summary as context
 python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 python -m hyperhelix.cli.commands export graph.json
@@ -133,6 +134,7 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"hug
 curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"local"}'
 curl http://localhost:8000/models/huggingface?q=gpt2
 curl -X POST http://localhost:8000/chat -d '{"prompt":"Hello"}'
+# includes a graph summary automatically
 ```
 ```
 hyperhelix_system/

@@ -49,10 +49,13 @@ def test_cli_issues(monkeypatch):
 
 def test_cli_codex(monkeypatch):
     class FakeModel:
+        captured = None
+
         def __init__(self, *a, **kw):
             pass
 
         def generate_response(self, messages):
+            FakeModel.captured = messages
             return "pong"
 
     monkeypatch.setattr("hyperhelix.agents.llm.OpenRouterChatModel", FakeModel)
@@ -60,14 +63,18 @@ def test_cli_codex(monkeypatch):
     result = runner.invoke(commands.cli, ["codex", "ping"])
     assert result.exit_code == 0
     assert "pong" in result.output
+    assert FakeModel.captured[0]["role"] == "system"
 
 
 def test_cli_codex_local(monkeypatch):
     class FakeModel:
+        captured = None
+
         def __init__(self, *a, **kw):
             pass
 
         def generate_response(self, messages):
+            FakeModel.captured = messages
             return "loc"
 
     monkeypatch.setattr("hyperhelix.agents.llm.TransformersChatModel", FakeModel)
@@ -75,14 +82,18 @@ def test_cli_codex_local(monkeypatch):
     result = runner.invoke(commands.cli, ["codex", "hello", "--provider", "local"])
     assert result.exit_code == 0
     assert "loc" in result.output
+    assert FakeModel.captured[0]["role"] == "system"
 
 
 def test_cli_codex_stream(monkeypatch):
     class FakeModel:
+        captured = None
+
         def __init__(self, model="openai/gpt-4o", api_key=None):
             FakeModel.used_model = model
 
         def stream_response(self, messages):
+            FakeModel.captured = messages
             return "stream"
 
     monkeypatch.setattr("hyperhelix.agents.llm.OpenRouterChatModel", FakeModel)
@@ -94,6 +105,7 @@ def test_cli_codex_stream(monkeypatch):
     assert result.exit_code == 0
     assert "stream" in result.output
     assert FakeModel.used_model == "foo-model"
+    assert FakeModel.captured[0]["role"] == "system"
 
 
 def test_cli_models_openrouter(monkeypatch):

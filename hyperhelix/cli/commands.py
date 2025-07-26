@@ -57,6 +57,8 @@ def issues(repo: str) -> None:
 def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
     """Return a quick LLM response using the configured provider."""
     from ..agents import llm
+    from ..api import main
+    from ..agents.context import graph_summary
 
     provider = provider.lower()
     if provider == "openai":
@@ -65,7 +67,11 @@ def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
         chat = llm.OpenAIChatModel(
             model=model or "gpt-3.5-turbo", api_key=get_api_key("OPENAI_API_KEY")
         )
-        response = chat.generate_response([{"role": "user", "content": prompt}])
+        messages = [
+            {"role": "system", "content": graph_summary(main.app.state.graph)},
+            {"role": "user", "content": prompt},
+        ]
+        response = chat.generate_response(messages)
     elif provider == "openrouter":
         from ..utils import get_api_key
 
@@ -73,10 +79,14 @@ def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
             model=model or "openai/gpt-4o",
             api_key=get_api_key("OPENROUTER_API_KEY") or "test",
         )
+        messages = [
+            {"role": "system", "content": graph_summary(main.app.state.graph)},
+            {"role": "user", "content": prompt},
+        ]
         if stream:
-            response = chat.stream_response([{"role": "user", "content": prompt}])
+            response = chat.stream_response(messages)
         else:
-            response = chat.generate_response([{"role": "user", "content": prompt}])
+            response = chat.generate_response(messages)
     elif provider == "huggingface":
         from ..utils import get_api_key
 
@@ -84,10 +94,18 @@ def codex(prompt: str, provider: str, model: str | None, stream: bool) -> None:
             model=model or "HuggingFaceH4/zephyr-7b-beta",
             api_key=get_api_key("HUGGINGFACE_API_TOKEN"),
         )
-        response = chat.generate_response([{"role": "user", "content": prompt}])
+        messages = [
+            {"role": "system", "content": graph_summary(main.app.state.graph)},
+            {"role": "user", "content": prompt},
+        ]
+        response = chat.generate_response(messages)
     else:
         chat = llm.TransformersChatModel(model=model or "sshleifer/tiny-gpt2")
-        response = chat.generate_response([{"role": "user", "content": prompt}])
+        messages = [
+            {"role": "system", "content": graph_summary(main.app.state.graph)},
+            {"role": "user", "content": prompt},
+        ]
+        response = chat.generate_response(messages)
 
     click.echo(response)
 
