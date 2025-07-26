@@ -20,8 +20,16 @@
 - **hyperhelix/api/routers/chat.py** – return LLM completions with a graph summary via `/chat`.
 - **hyperhelix/api/routers/tasks.py** – CRUD operations for tasks.
 - **hyperhelix/api/routers/suggest.py** – get LLM-based code suggestions.
- - **hyperhelix/agents/llm.list_openrouter_models** – fetch OpenRouter models.
- - **hyperhelix/agents/llm.list_huggingface_models** – fetch HuggingFace models.
+- **hyperhelix/api/routers/autosuggest.py** – generate tasks for a node via `/autosuggest`.
+- **hyperhelix/execution/suggestion.py** – create tasks from LLM analysis when nodes are inserted. Supports OpenAI, OpenRouter, HuggingFace and local models.
+- `enable_auto_suggest(graph)` binds automatic suggestions to node insertion.
+- **hyperhelix/agents/llm.list_openrouter_models** – fetch OpenRouter models.
+- **hyperhelix/agents/llm.list_huggingface_models** – fetch HuggingFace models.
+- **hyperhelix/agents/openai_agent.py** – build graph-aware agents using the
+  OpenAI Agents SDK. Tools include graph summary, listing nodes,
+  inserting nodes, connecting them with edges and generating follow-up
+  tasks via `autosuggest`. Agents can maintain sessions for ongoing
+  conversations.
 - **frontend/** – example React + Three.js client.
 - **tests/** – unit tests covering the system.
 
