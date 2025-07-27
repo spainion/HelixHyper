@@ -59,6 +59,7 @@ python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
 python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
     check --env dev --config ctx.yaml
 python -m hyperhelix.cli.commands import-context path/to/ctx.db
+# prints the number of nodes and edges merged from the database file
 ```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using

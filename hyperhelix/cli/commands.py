@@ -181,6 +181,12 @@ def import_context(path: str) -> None:
     from ..api.main import app
 
     db_path = Path(path)
+    if not db_path.is_file():
+        raise click.BadParameter("path must reference a file")
+
     mem_graph = persistence.load(db_path)
     importer.merge_memory_graph(mem_graph, app.state.graph)
-    click.echo(f"Imported {len(mem_graph.nodes)} nodes from {db_path}")
+    edge_count = sum(len(t) for m in mem_graph.nodes.values() for t in m.edges.values())
+    click.echo(
+        f"Imported {len(mem_graph.nodes)} nodes and {edge_count} edges from {db_path}"
+    )
