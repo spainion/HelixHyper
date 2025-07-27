@@ -149,3 +149,23 @@ def test_cli_export(monkeypatch):
     data = json.loads(result.output)
     assert any(n["id"] == "a" for n in data["nodes"])
     assert any(e["a"] == "a" and e["b"] == "b" for e in data["edges"])
+
+
+def test_cli_import_context(tmp_path):
+    from hyperhelix.api import main
+    from hyperhelix.core import HyperHelix
+    from ultimate_zamida_fs_interpreter.memory import persistence, memory_graph
+
+    g = memory_graph.MemoryGraph()
+    n1 = g.add_node("foo")
+    n2 = g.add_node("bar")
+    g.link_nodes(n1.id, "ref", n2.id)
+    path = tmp_path / "ctx.db"
+    persistence.save(g, path)
+
+    main.app.state.graph = HyperHelix()
+    runner = CliRunner()
+    result = runner.invoke(commands.cli, ["import-context", str(path)])
+    assert result.exit_code == 0
+    assert set(main.app.state.graph.nodes) == {n1.id, n2.id}
+    assert n2.id in main.app.state.graph.nodes[n1.id].edges
