@@ -1,0 +1,38 @@
+from __future__ import annotations
+
+import logging
+
+from .core import HyperHelix
+from .node import Node
+from ultimate_zamida_fs_interpreter.memory.memory_graph import MemoryGraph
+
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["merge_memory_graph"]
+
+
+def merge_memory_graph(mem_graph: MemoryGraph, graph: HyperHelix | None = None) -> HyperHelix:
+    """Merge ``mem_graph`` into ``graph`` returning the updated graph."""
+    graph = graph or HyperHelix()
+
+    node_count = len(mem_graph.nodes)
+    edge_count = sum(len(t) for m in mem_graph.nodes.values() for t in m.edges.values())
+    logger.info("Merging %d nodes and %d edges from memory graph", node_count, edge_count)
+
+    for mem_node in mem_graph.nodes.values():
+        if mem_node.id not in graph.nodes:
+            payload = {"content": mem_node.content, "metadata": mem_node.metadata}
+            graph.add_node(Node(id=mem_node.id, payload=payload))
+
+    for src_id, mem_node in mem_graph.nodes.items():
+        for targets in mem_node.edges.values():
+            for dst_id in targets:
+                if src_id in graph.nodes and dst_id in graph.nodes:
+                    try:
+                        graph.add_edge(src_id, dst_id)
+                    except KeyError:
+                        logger.exception("Failed to link %s -> %s", src_id, dst_id)
+
+    return graph
+

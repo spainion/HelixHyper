@@ -168,3 +168,25 @@ def export(output: str) -> None:
     else:
         Path(output).write_text(text)
         click.echo(f"Exported to {output}")
+
+
+@cli.command("import-context")
+@click.argument("path", type=click.Path(exists=True))
+def import_context(path: str) -> None:
+    """Merge a context database at ``PATH`` into the running graph."""
+    from pathlib import Path
+
+    from ultimate_zamida_fs_interpreter.memory import persistence
+    from .. import importer
+    from ..api.main import app
+
+    db_path = Path(path)
+    if not db_path.is_file():
+        raise click.BadParameter("path must reference a file")
+
+    mem_graph = persistence.load(db_path)
+    importer.merge_memory_graph(mem_graph, app.state.graph)
+    edge_count = sum(len(t) for m in mem_graph.nodes.values() for t in m.edges.values())
+    click.echo(
+        f"Imported {len(mem_graph.nodes)} nodes and {edge_count} edges from {db_path}"
+    )
