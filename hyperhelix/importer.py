@@ -9,6 +9,8 @@ from ultimate_zamida_fs_interpreter.memory.memory_graph import MemoryGraph
 
 logger = logging.getLogger(__name__)
 
+__all__ = ["merge_memory_graph"]
+
 
 def merge_memory_graph(mem_graph: MemoryGraph, graph: HyperHelix | None = None) -> HyperHelix:
     """Merge ``mem_graph`` into ``graph`` returning the updated graph."""
