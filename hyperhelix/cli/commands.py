@@ -171,13 +171,16 @@ def export(output: str) -> None:
 
 
 @cli.command("import-context")
-@click.argument("path")
+@click.argument("path", type=click.Path(exists=True))
 def import_context(path: str) -> None:
-    """Merge a context database into the running graph."""
+    """Merge a context database at ``PATH`` into the running graph."""
+    from pathlib import Path
+
     from ultimate_zamida_fs_interpreter.memory import persistence
     from .. import importer
     from ..api.main import app
 
-    mem_graph = persistence.load(path)
+    db_path = Path(path)
+    mem_graph = persistence.load(db_path)
     importer.merge_memory_graph(mem_graph, app.state.graph)
-    click.echo(f"Imported {len(mem_graph.nodes)} nodes")
+    click.echo(f"Imported {len(mem_graph.nodes)} nodes from {db_path}")

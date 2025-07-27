@@ -31,7 +31,7 @@
  `init`, `register`, `status` and `check` commands for managing the
  database. Merge a saved context graph into the running API using
  `hyperhelix.importer.merge_memory_graph` or the `import-context`
- CLI command.
+ CLI command with the path to your database.
 
 Start the API from the command line with `python -m hyperhelix.cli.commands serve`.
 Use `python -m hyperhelix.cli.commands scan .` to index a directory.

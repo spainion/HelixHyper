@@ -58,7 +58,7 @@ python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
     status --graph ctx.db --registry registry.json --log ctx.log
 python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
     check --env dev --config ctx.yaml
-python -m hyperhelix.cli.commands import-context ctx.db
+python -m hyperhelix.cli.commands import-context path/to/ctx.db
 ```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
