@@ -12,4 +12,4 @@ if CONFIG_PATH.exists():
 else:
     logging.basicConfig(level=logging.INFO)  # pragma: no cover
 
-__all__ = ['core', 'node', 'edge', 'metadata', 'utils']
+__all__ = ['core', 'node', 'edge', 'metadata', 'utils', 'importer']

@@ -49,6 +49,16 @@ python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model opena
 python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 python -m hyperhelix.cli.commands export graph.json
+# manage a standalone context database
+python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
+    init --graph ctx.db --registry registry.json --log ctx.log
+python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
+    register --registry registry.json
+python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
+    status --graph ctx.db --registry registry.json --log ctx.log
+python -m ultimate_zamida_fs_interpreter.scripts.context_cli \
+    check --env dev --config ctx.yaml
+python -m hyperhelix.cli.commands import-context ctx.db
 ```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
@@ -253,6 +263,8 @@ The directories above form a cohesive system:
 - **frontend/** is a reference React application to browse and edit the graph.
 - **tests/** keep all modules verified.
 - **docs/** provide architecture details and tutorials.
+- **ultimate_zamida_fs_interpreter/** offers a small context manager and
+  interpreter used by various helper scripts.
 
 ## Logging and Error Management
 Python's `logging` package is configured through `config/logging.yaml`. Logs are emitted to the console and stored in `hyperhelix.log`, while errors are also written to `errors.log`. Tune log levels in that file to match the environment. When handling exceptions, log the failure with context and either re-raise or return a meaningful error to callers. Avoid TODO markers in committed code—track outstanding work in issue trackers or documentation.
