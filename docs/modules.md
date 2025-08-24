@@ -6,7 +6,8 @@
 - **hyperhelix/cli/** – command-line interface helpers.
 - **hyperhelix/core.py** – graph container with `add_node`, `add_edge`, `remove_edge`, `remove_node`, `spiral_walk` and `shortest_path`.
 - **persistence adapters** – implement `save_node`, `load_node`, `save_edge` and
-  `load_edges` for automatic storage when supplied to `HyperHelix`.
+  `load_edges` for automatic storage when supplied to `HyperHelix`. The
+  `JSONFileAdapter` persists data to a local JSON file for quick experiments.
 - **hyperhelix/evolution/** – event-driven and periodic engines that update node metrics.
 - **hyperhelix/agents/code_scanner.py** – scans directories, stores Python source and links files via imports.
  - **hyperhelix/agents/llm.py** – wrappers for OpenAI, OpenRouter, HuggingFace and local Transformers chat models.

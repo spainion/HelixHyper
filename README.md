@@ -56,7 +56,8 @@ Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 
 The `HyperHelix` graph accepts a persistence adapter for automatically storing
 nodes and edges. Instantiate it with an adapter such as `Neo4jAdapter` to
-persist connections as they are created.
+persist connections as they are created. For quick local experiments, the
+`JSONFileAdapter` writes graph data to a simple JSON file.
 
 Alternatively build and run the provided Dockerfile:
 
@@ -245,7 +246,8 @@ The directories above form a cohesive system:
 - **evolution/evented_engine.py** reacts instantly to insert/update hooks, pruning or weaving without polling.
 - **execution/** bridges external callables (builds, tests, deploys) into graph execution and auto-bloom hooks.
 - **tasks/** manages project tasks through graph-driven `create_task`, `assign_task` and `sprint_plan` helpers.
-- **persistence/** stores nodes and edges via pluggable adapters for Neo4j, Qdrant or SQLAlchemy.
+- **persistence/** stores nodes and edges via pluggable adapters such as
+  `JSONFileAdapter`, `Neo4jAdapter`, `QdrantAdapter` or `SQLAlchemyAdapter`.
 - **api/** exposes operations over REST and GraphQL using Pydantic schemas and optional auth stubs.
 - **cli/** offers local commands to initialise, import, export and serve the system.
 - **visualization/** generates 3D coordinates for Three.js rendering.
