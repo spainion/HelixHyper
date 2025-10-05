@@ -65,6 +65,15 @@ docker build -t helixhyper .
 docker run -p 8000:8000 helixhyper
 ```
 
+For development with full tooling (pytest, git, editors), use the development container:
+
+```bash
+docker build -f Dockerfile.dev -t helixhyper-dev .
+docker run -it -p 8000:8000 -v $(pwd):/app helixhyper-dev
+```
+
+See `docs/docker.md` for detailed Docker development workflow instructions.
+
 ## Development Workflow
 Follow these practices when contributing to ensure consistent builds and clear logs:
 

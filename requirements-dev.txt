@@ -1,0 +1,10 @@
+# Development dependencies
+# Includes all production dependencies plus testing and development tools
+-r requirements.txt
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Code quality (optional but recommended for development)
+# Add these if they're used in the project
