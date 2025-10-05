@@ -81,7 +81,7 @@ docker run -it -p 8000:8000 -v $(pwd):/app helixhyper-dev
 docker-compose up dev
 ```
 
-See `docs/docker.md` for detailed Docker development workflow instructions.
+See `docs/docker.md` for detailed Docker documentation and `docs/dev-container-quickref.md` for a quick reference guide.
 
 ## Development Workflow
 Follow these practices when contributing to ensure consistent builds and clear logs:
