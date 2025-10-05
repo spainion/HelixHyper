@@ -15,7 +15,12 @@ WORKDIR /app
 COPY requirements.txt requirements-dev.txt /app/
 
 # Install Python dependencies (development)
-RUN pip install --no-cache-dir -r requirements-dev.txt
+# Use --trusted-host flags to work around SSL certificate issues in some environments
+RUN pip install --no-cache-dir \
+    --trusted-host pypi.org \
+    --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org \
+    -r requirements-dev.txt
 
 # Copy the entire project
 COPY . /app

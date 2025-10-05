@@ -65,11 +65,20 @@ docker build -t helixhyper .
 docker run -p 8000:8000 helixhyper
 ```
 
+Or use Docker Compose:
+
+```bash
+docker-compose up api
+```
+
 For development with full tooling (pytest, git, editors), use the development container:
 
 ```bash
 docker build -f Dockerfile.dev -t helixhyper-dev .
 docker run -it -p 8000:8000 -v $(pwd):/app helixhyper-dev
+
+# Or with Docker Compose
+docker-compose up dev
 ```
 
 See `docs/docker.md` for detailed Docker development workflow instructions.

@@ -2,6 +2,27 @@
 
 This guide explains how to use Docker for both production and development workflows with HelixHyper.
 
+## Quick Start with Docker Compose
+
+The easiest way to get started is with Docker Compose:
+
+```bash
+# Start the production API server
+docker-compose up api
+
+# Start the development environment
+docker-compose up dev
+
+# Or run in detached mode
+docker-compose up -d api
+```
+
+The compose file automatically:
+- Builds the appropriate image
+- Maps port 8000 to your host
+- Passes through API keys from your environment
+- Mounts logs and source code (for dev)
+
 ## Production Container
 
 The standard `Dockerfile` builds a minimal production container that runs the API server:
@@ -119,3 +140,31 @@ Both containers have internet access enabled, allowing you to:
 - Download models and data
 
 Make sure your Docker daemon has internet access and isn't blocked by firewalls or proxy settings.
+
+## Troubleshooting
+
+### SSL Certificate Errors
+
+Both Dockerfiles include `--trusted-host` flags when installing packages to work around SSL certificate verification issues that can occur in some CI/CD environments or corporate networks with proxies. This is a known workaround and does not compromise security when installing from official PyPI mirrors.
+
+If you encounter SSL errors when building the images, these flags help bypass self-signed certificate issues in the build environment.
+
+### Container Won't Start
+
+If the production container won't start, check the logs:
+
+```bash
+docker logs <container-id>
+```
+
+Common issues:
+- Port 8000 already in use: Use `-p 8001:8000` to map to a different host port
+- Missing configuration: Ensure `config/` directory exists and contains required YAML files
+
+### Tests Fail in Container
+
+When running tests with `USE_REAL_LLM=1` or `./scripts/test_with_llm.sh`, tests will fail if API keys are not set. This is expected behavior. Either:
+
+1. Set API keys as environment variables when running the container
+2. Run tests without the flag (default mocks will be used)
+3. Run only specific tests that don't require API access
