@@ -50,6 +50,34 @@ python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 python -m hyperhelix.cli.commands export graph.json
 ```
+
+Create a graph-aware OpenAI agent using the Agents SDK:
+
+```python
+from hyperhelix.core import HyperHelix
+from hyperhelix.agents.openai_agent import (
+    create_graph_agent,
+    run_graph_agent,
+    run_graph_agent_async,
+    create_session,
+)
+
+g = HyperHelix()
+agent = create_graph_agent(g)
+session = create_session()
+response = run_graph_agent(agent, "Summarize the graph", session=session)
+print(response)
+
+# Or run asynchronously
+import asyncio
+asyncio.run(run_graph_agent_async(agent, "Summarize the graph", session=session))
+
+# Agents can also modify the graph:
+run_graph_agent(agent, "add_node id=test payload='demo'")
+run_graph_agent(agent, "connect_nodes a=test b=other", session=session)
+# have the agent generate follow-up tasks
+run_graph_agent(agent, "autosuggest node_id=test", session=session)
+```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
 `hyperhelix.utils.get_api_key()`.
@@ -153,6 +181,18 @@ curl -X POST http://localhost:8000/suggest -d '{"prompt":"Hello","provider":"loc
 curl http://localhost:8000/models/huggingface?q=gpt2
 curl -X POST http://localhost:8000/chat -d '{"prompt":"Hello"}'
 # includes a graph summary automatically
+# have the server generate follow-up tasks for a node
+curl -X POST http://localhost:8000/autosuggest -d '{"node_id":"my-node"}'
+# or do the same in code
+python - <<'PY'
+from hyperhelix.core import HyperHelix
+from hyperhelix.execution import enable_auto_suggest
+from hyperhelix.node import Node
+
+g = HyperHelix()
+enable_auto_suggest(g)
+g.add_node(Node(id="x", payload="print('hi')"))
+PY
 ```
 ```
 hyperhelix_system/

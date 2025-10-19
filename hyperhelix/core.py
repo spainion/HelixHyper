@@ -41,8 +41,11 @@ class HyperHelix:
         self.nodes[node.id] = node
         if self.adapter:
             self.adapter.save_node(node.id, node.payload)
-        for hook in self._insert_hooks:
-            hook(self, node.id)
+        for hook in list(self._insert_hooks):
+            try:
+                hook(self, node.id)
+            except Exception:
+                logger.exception("Insert hook failed")
 
     def add_edge(self, a: str, b: str, weight: float = 1.0) -> None:
         logger.debug("Adding edge %s <-> %s", a, b)
