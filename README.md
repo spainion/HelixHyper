@@ -1,6 +1,6 @@
 # HelixHyper
 
-HelixHyper orchestrates code analysis, task management and execution through a multi-layered graph structure.
+HyperHelix is a powerful context management system that orchestrates code analysis, task management and execution through a multi-layered graph structure.
 HelixHyper provides a minimal implementation alongside documentation and configuration. The layout below outlines the complete system as it grows.
 
 ## Getting Started
