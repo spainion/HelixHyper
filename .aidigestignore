@@ -1,0 +1,90 @@
+# AI Digest Ignore - Files to exclude from AI context
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+coverage.xml
+*.cover
+
+# Logs
+*.log
+hyperhelix.log
+errors.log
+
+# Build artifacts
+ultimate_zamida_fs_interpreter.zip
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files (may contain secrets)
+.env
+.env.local
+
+# Large data files
+*.csv
+*.json.gz
+*.pkl
+
+# Documentation builds
+docs/_build/
+site/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+
+# Docker
+.dockerignore
+Dockerfile
+Dockerfile.dev
+docker-compose.yml
+
+# CI/CD (reference but don't digest)
+.github/workflows/
+
+# Large dependencies or vendored code
+node_modules/
+vendor/

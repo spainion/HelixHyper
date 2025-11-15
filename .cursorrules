@@ -1,0 +1,115 @@
+# Cursor AI Rules for HelixHyper
+
+## Project Context
+HyperHelix is a powerful context management system that orchestrates code analysis, task management, and execution through a multi-layered graph structure.
+
+## Code Style & Standards
+- Python 3.12+ with full type hints
+- Use `from __future__ import annotations` for forward references
+- Dataclass patterns for data structures
+- Module-level loggers: `logger = logging.getLogger(__name__)`
+- Never use bare `except` clauses
+- No TODO comments in committed code
+
+## Architecture
+- **Core**: `HyperHelix` class manages nodes and edges
+- **Node**: Dataclass with id, payload, tags, metadata, edges, execute_fn
+- **Edge**: Bidirectional weighted connections
+- **Metadata**: Tracks lifecycle, importance, permanence, perception_history
+
+## Development Workflow
+1. Install: `pip install -r requirements.txt`
+2. Test: `pytest -q` (always before committing)
+3. Logs: Check `hyperhelix.log` and `errors.log`
+4. Config: `config/logging.yaml`, `config/default.yaml`, `config/persistence.yaml`
+
+## API Keys (Environment Variables)
+- `OPENAI_API_KEY`: OpenAI models
+- `OPENROUTER_API_KEY`: OpenRouter (multi-provider)
+- `HUGGINGFACE_API_TOKEN`: HuggingFace Inference API
+- Access via: `from hyperhelix.utils import get_api_key`
+
+## Common Patterns
+
+### Graph Operations
+```python
+from hyperhelix.core import HyperHelix
+from hyperhelix.node import Node
+
+graph = HyperHelix()
+node = Node(id="n1", payload={...}, tags=["tag1"])
+graph.add_node(node)
+graph.add_edge("n1", "n2", weight=1.0)
+```
+
+### LLM Integration
+```python
+from hyperhelix.agents.llm import OpenRouterChatModel
+from hyperhelix.agents.context import graph_summary
+
+model = OpenRouterChatModel(model="openai/gpt-4o", api_key=get_api_key("OPENROUTER_API_KEY"))
+messages = [
+    {"role": "system", "content": graph_summary(graph)},
+    {"role": "user", "content": "prompt"}
+]
+response = model.generate_response(messages)
+```
+
+### Testing
+```python
+# Mock external services
+from unittest.mock import patch, MagicMock
+
+@patch("httpx.post")
+def test_api_call(mock_post):
+    mock_post.return_value = MagicMock(json=lambda: {...})
+    # Test code
+```
+
+## Module Structure
+- `hyperhelix/core.py`: Graph operations
+- `hyperhelix/node.py`, `edge.py`, `metadata.py`: Core types
+- `hyperhelix/api/`: FastAPI REST endpoints
+- `hyperhelix/cli/`: Click commands
+- `hyperhelix/agents/`: LLM integrations, code scanning
+- `hyperhelix/persistence/`: Database adapters
+- `hyperhelix/analytics/`: Node metrics
+- `hyperhelix/evolution/`: Auto-evolution engines
+- `hyperhelix/tasks/`: Task management
+
+## CLI Commands
+```bash
+python -m hyperhelix.cli.commands serve          # Start API
+python -m hyperhelix.cli.commands scan .         # Index repo
+python -m hyperhelix.cli.commands codex "prompt" # LLM query
+python -m hyperhelix.cli.commands models         # List models
+```
+
+## API Endpoints
+- POST `/nodes`, GET `/nodes/{id}`, DELETE `/nodes/{id}`
+- POST `/edges`, GET `/edges`, DELETE `/edges/{a}/{b}`
+- GET `/walk/{id}?depth=N`, GET `/summary`, GET `/export`
+- POST `/suggest`, POST `/chat`, GET `/models/{provider}`
+- POST `/scan`, POST `/tasks`
+
+## Guidelines
+- Keep directory structure from README.md
+- Configure logging via config/logging.yaml
+- Update docs when adding features
+- Check module-specific AGENTS.md files
+- Run tests before committing
+- Use hooks: `register_insert_hook`, `register_update_hook`
+
+## Don't
+- Leave TODO comments
+- Commit without running pytest
+- Use bare exceptions
+- Hardcode credentials
+- Modify working code unnecessarily
+
+## References
+- Main: `/README.md`
+- Architecture: `/docs/architecture.md`
+- Modules: `/docs/modules.md`
+- Guidelines: `/AGENTS.md` (and in each module)
+- Agent Instructions: `/.github/AGENT_INSTRUCTIONS.md`

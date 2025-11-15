@@ -1,0 +1,42 @@
+name: Welcome
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Welcome new contributors
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 Thanks for opening your first issue! 
+            
+            Welcome to HyperHelix - a powerful context management system! 
+            
+            To help us assist you better:
+            - Check if your issue is covered in the [README](../README.md) or [documentation](../docs/)
+            - Review the [CONTRIBUTING guide](../CONTRIBUTING.md) for development setup
+            - Browse module-specific `AGENTS.md` files for detailed guidance
+            
+            A maintainer will review your issue soon. Feel free to provide additional context if needed!
+          pr-message: |
+            🎉 Thanks for opening your first pull request!
+            
+            Welcome to HyperHelix development! Here are some tips:
+            
+            - Ensure all tests pass: `pytest -q`
+            - Check the [CONTRIBUTING guide](../CONTRIBUTING.md) for guidelines
+            - Review module-specific `AGENTS.md` files
+            - Update documentation for user-facing changes
+            - Add tests for new functionality
+            
+            Our CI will run automatically. A maintainer will review your PR soon!
