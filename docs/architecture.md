@@ -1,6 +1,6 @@
 # Architecture Overview
 
-HelixHyper is organized around a graph of `Node` objects connected via weighted edges. Each node carries payload data and metadata about its creation and updates. The `HyperHelix` class manages these nodes and provides traversal helpers like `spiral_walk`.
+HyperHelix is a powerful context management system organized around a graph of `Node` objects connected via weighted edges. Each node carries payload data and metadata about its creation and updates. The `HyperHelix` class manages these nodes and provides traversal helpers like `spiral_walk`.
 
 Nodes and individual edges can be deleted via the API. Removing a node automatically drops all edges that reference it.
 Edges connected to a specific node can also be retrieved using the `/edges/{id}` endpoint.
