@@ -9,3 +9,5 @@ openai
 huggingface_hub
 httpx
 transformers
+pytest-asyncio
+openai-agents
