@@ -49,6 +49,8 @@ python -m hyperhelix.cli.commands codex "Hi" --provider openrouter --model opena
 python -m hyperhelix.cli.commands models --provider openrouter
 python -m hyperhelix.cli.commands models --provider huggingface --query gpt2
 python -m hyperhelix.cli.commands export graph.json
+python -m hyperhelix.cli.commands connectivity
+python -m hyperhelix.cli.commands connectivity --service http://localhost:8000
 ```
 Commands read provider keys such as `OPENAI_API_KEY`, `OPENROUTER_API_KEY` and
 `HUGGINGFACE_API_TOKEN` from the environment using
