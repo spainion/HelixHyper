@@ -3,6 +3,21 @@ from __future__ import annotations
 import os
 import click
 
+DEFAULT_SERVICE_URLS = (
+    "https://api.openai.com/v1/models",
+    "https://openrouter.ai/api/v1/models",
+    "https://huggingface.co/api/models",
+)
+
+DEFAULT_API_KEY_TARGETS = {
+    "OPENAI_API_KEY": {"test_url": "https://api.openai.com/v1/models"},
+    "OPENROUTER_API_KEY": {"test_url": "https://openrouter.ai/api/v1/models"},
+    "HUGGINGFACE_API_TOKEN": {
+        "test_url": "https://huggingface.co/api/whoami-v2",
+        "header_prefix": "Bearer ",
+    },
+}
+
 
 @click.group()
 def cli() -> None:
@@ -168,3 +183,39 @@ def export(output: str) -> None:
     else:
         Path(output).write_text(text)
         click.echo(f"Exported to {output}")
+
+
+@cli.command()
+@click.option(
+    "--service",
+    "services",
+    multiple=True,
+    help="Additional service URLs to probe on top of the defaults.",
+)
+def connectivity(services: tuple[str, ...]) -> None:
+    """Check internet, provider endpoints, and configured API keys."""
+
+    from ..connectivity.check import collect_connectivity_report
+
+    service_urls = list(DEFAULT_SERVICE_URLS) + list(services)
+    report = collect_connectivity_report(
+        service_urls=service_urls,
+        api_key_targets=DEFAULT_API_KEY_TARGETS,
+    )
+
+    click.echo(f"Internet: {'✅' if report['internet'] else '❌'}")
+
+    if report["services"]:
+        click.echo("Services:")
+        for url, available in report["services"].items():
+            status = "✅" if available else "❌"
+            click.echo(f"  {status} {url}")
+
+    if report["api_keys"]:
+        click.echo("API keys:")
+        for key_name, details in report["api_keys"].items():
+            present = "set" if details["present"] else "missing"
+            status = "valid" if details["valid"] else "invalid"
+            click.echo(
+                f"  {key_name}: {present}, {status} (tested {details['test_url']})"
+            )
