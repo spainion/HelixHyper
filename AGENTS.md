@@ -12,6 +12,8 @@ This document consolidates the working conventions for HelixHyper so contributor
 - Set required keys in the environment (e.g., `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `HUGGINGFACE_API_TOKEN`) before executing code or tests. Validate them early with a real request to the configured provider; avoid mock servers or monkey patches.
 - Prefer local `uvicorn` services for live execution: `uvicorn hyperhelix.api.main:app --reload --port 8000` for the API and the router-specific apps under `hyperhelix/api/routers`. Use `httpx`/`requests` clients against these running servers when exercising flows.
 - Keep `.env` files aligned with `config/example.env` and load them through the existing config helpers (see `hyperhelix.config.loaders`). Avoid introducing alternative env-loading stacks.
+- Confirm outbound network reachability and key validity at container start using the existing helpers (for example, `hyperhelix.connectivity.check.is_internet_available`, `check_api_key_validity`, and `wait_for_connectivity`). Prefer these utilities over ad hoc curls so all services share a consistent readiness path.
+- When pointing to external providers, pin the URL to the configured production endpoint and record any temporary overrides in commit messages and docs. Do not fall back to fake servers or stubbed responses.
 
 ## Development workflow
 - Run `pytest -q` before each commit to ensure imports and tests pass. Use `scripts/test_with_llm.sh` with `USE_REAL_LLM=1` when validating live LLM flows.
@@ -33,6 +35,7 @@ This document consolidates the working conventions for HelixHyper so contributor
 - When crafting responses or tools that rely on HelixHyper state, reference the established node/edge graph operations and persistence adapters rather than duplicating orchestration logic.
 - Keep documentation synchronized with any agent-facing helper you add so that future agents can respond using the same primitives without re-learning configuration steps.
 - Prefer deterministic, idempotent helper functions that minimize token and request usage while preserving fidelity to real endpoints. Reuse shared utilities for retries, tracing, and payload shaping instead of writing one-off code.
+- Validate live connectivity and provider availability before shipping flows that depend on external calls. Use the connectivity utilities to guard long-running operations, and prefer routing tests through the locally running API to conserve tokens while still exercising real request paths.
 
 ## Documentation map
 - `docs/AGENTS.md` details build and deployment steps.
